@@ -74,7 +74,12 @@ const CashbackSection = () => {
                 </div>
               </div>
               
-              <Button className="w-full btn-primary">Start Earning Cashback</Button>
+              <Button 
+                className="w-full btn-primary"
+                onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}
+              >
+                Start Earning Cashback
+              </Button>
             </div>
           </div>
           

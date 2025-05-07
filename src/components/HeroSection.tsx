@@ -16,7 +16,7 @@ const HeroSection = () => {
               Free premium trading tools and cashback rewards on every trade. Join thousands of traders maximizing their forex potential.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button className="btn-primary flex items-center gap-2">
+              <Button className="btn-primary flex items-center gap-2" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
                 Start Trading <ArrowRight className="h-4 w-4" />
               </Button>
               <Button variant="outline" className="btn-outline flex items-center gap-2">

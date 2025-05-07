@@ -41,10 +41,10 @@ const Navbar = () => {
 
           {/* Login/Register Buttons */}
           <div className="hidden md:flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="border-jaguargold text-jaguargold hover:text-jaguarblue-900">
+            <Button variant="outline" size="sm" className="border-jaguargold text-jaguargold hover:text-jaguarblue-900" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/login"}>
               Login
             </Button>
-            <Button size="sm" className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900">
+            <Button size="sm" className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
               Register
             </Button>
           </div>
@@ -70,10 +70,10 @@ const Navbar = () => {
             <a href="#" className="block py-2 px-4 hover:bg-jaguarblue-700">Resources</a>
             
             <div className="mt-4 flex flex-col space-y-2 px-4">
-              <Button variant="outline" size="sm" className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full">
+              <Button variant="outline" size="sm" className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/login"}>
                 Login
               </Button>
-              <Button size="sm" className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full">
+              <Button size="sm" className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
                 Register
               </Button>
             </div>
