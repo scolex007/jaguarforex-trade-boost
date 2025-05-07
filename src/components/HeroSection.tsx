@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Download, TrendingUp } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
+import AnimatedTradingChart from "./AnimatedTradingChart";
 
 const HeroSection = () => {
   return (
@@ -42,14 +43,9 @@ const HeroSection = () => {
           
           <div className="hidden lg:block relative">
             <div className="bg-jaguarblue-700/20 backdrop-blur-sm rounded-2xl border border-jaguarblue-600 p-6 animate-float shadow-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-semibold gradient-text">Trading Dashboard</h3>
-                <TrendingUp className="text-jaguargold" />
-              </div>
-              <div className="bg-jaguarblue-800 rounded-lg p-4 mb-4">
-                <div className="h-48 bg-jaguarblue-700/50 rounded-md bg-chart-pattern bg-cover bg-center"></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+              <AnimatedTradingChart />
+              
+              <div className="grid grid-cols-2 gap-3 mt-4">
                 <div className="bg-jaguarblue-800 p-3 rounded-md">
                   <p className="text-xs text-gray-400">Wallet Balance</p>
                   <p className="text-jaguargold font-semibold">$2,450.00</p>
