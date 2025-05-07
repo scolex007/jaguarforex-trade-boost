@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { 
   LineChart, 
   Line, 
@@ -12,18 +12,27 @@ import {
 } from "recharts";
 import { TrendingUp, ChartLine, Wallet, CircleDollarSign } from "lucide-react";
 
-// Generate initial data
+// Generate initial data with smoother price movement
 const generateInitialData = () => {
   const data = [];
-  const baseValue = 1.14500;
-  const volatility = 0.00050;
+  // Starting price value
+  let currentValue = 1.13919;
+  // Reduced volatility for smoother movements
+  const volatility = 0.00020;
   
+  // Generate more points for smoother animation
   for (let i = 0; i < 30; i++) {
-    const random = Math.random() * volatility - volatility / 2;
-    const value = baseValue + random;
+    // Use a more controlled random factor for smoother movement
+    // This creates a smoother curve by making each point related to the previous one
+    const trend = Math.cos(i / 5) * volatility;
+    const noise = (Math.random() * volatility / 2) - (volatility / 4);
+    // Combine trend and small noise for organic but smoother movement
+    const change = trend + noise;
+    currentValue += change;
+    
     data.push({
       time: i,
-      value: parseFloat(value.toFixed(5)),
+      value: parseFloat(currentValue.toFixed(5)),
       automated: false
     });
   }
@@ -52,7 +61,10 @@ const AnimatedTradingChart = () => {
   const [animateWallet, setAnimateWallet] = useState(false);
   const [animateCashback, setAnimateCashback] = useState(false);
   
-  // Animation effect for the chart
+  // Reference for the previous value to create smoother transitions
+  const prevValueRef = useRef(data[data.length - 1]?.value || 1.13919);
+  
+  // Animation effect for the chart with smoother transitions
   useEffect(() => {
     let timer: number;
     
@@ -60,9 +72,17 @@ const AnimatedTradingChart = () => {
       // Add a new data point and remove the first one for scrolling effect
       setData(prevData => {
         const lastPoint = prevData[prevData.length - 1];
-        // Create more volatility for interesting chart movements
-        const random = Math.random() * 0.0015 - 0.00075;
-        const newValue = parseFloat((lastPoint.value + random).toFixed(5));
+        const prevValue = prevValueRef.current;
+        
+        // Create smoother transitions by having small incremental changes
+        // Use a combination of trend and tiny random noise
+        const trendFactor = Math.sin(Date.now() / 10000) * 0.00008;
+        const noise = (Math.random() * 0.00010) - 0.00005;
+        const change = trendFactor + noise;
+        
+        // Calculate new value with smoother transition from previous value
+        const newValue = parseFloat((prevValue + change).toFixed(5));
+        prevValueRef.current = newValue;
         
         const newData = [...prevData.slice(1), { 
           time: lastPoint.time + 1, 
@@ -153,6 +173,9 @@ const AnimatedTradingChart = () => {
   const priceChange = (data[data.length - 1]?.value - data[0]?.value).toFixed(5);
   const isPositiveChange = parseFloat(priceChange) >= 0;
   
+  // Calculate the precise index for where 75% of the chart width would be
+  const verticalLineIndex = Math.round(data.length * 0.75);
+  
   return (
     <div className="relative h-full">
       <div className="flex items-center justify-between mb-4">
@@ -208,6 +231,14 @@ const AnimatedTradingChart = () => {
               animationDuration={300}
             />
             
+            {/* Vertical line at approximately 75% of chart width */}
+            <ReferenceLine 
+              x={verticalLineIndex} 
+              stroke="#00b8d9" 
+              strokeDasharray="3 3" 
+              strokeWidth={1.5}
+            />
+            
             {data.map((point, index) => (
               point.automated && (
                 <ReferenceLine 
@@ -237,7 +268,7 @@ const AnimatedTradingChart = () => {
           </div>
         )}
         
-        {/* Automated trading label - moved to be center-top instead of center */}
+        {/* Automated trading label - positioned at top with enough margin to avoid overlap */}
         {showProfit && activeTrade !== null && (
           <div className="absolute top-5 left-1/2 transform -translate-x-1/2 bg-jaguarblue-800/90 border border-jaguargold/30 px-3 py-2 rounded-md animate-fade-in shadow-lg animate-pulse-border">
             <div className="text-white text-sm font-medium flex items-center">
