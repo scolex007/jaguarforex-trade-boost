@@ -10,27 +10,31 @@ const FaqSection = () => {
   const faqs = [
     {
       question: "What is JaguarForex?",
-      answer: "JaguarForex is a platform that provides free trading tools for forex traders, including Expert Advisors (EAs), indicators, and other trading tools. Additionally, we offer a cashback program that rewards traders with rebates on every trade they make through our affiliated brokers."
+      answer: "JaguarForex is a platform that offers free trading tools for forex traders, including Expert Advisors (EAs), indicators, and other helpful utilities. We also run a cashback program, rewarding traders with rebates for every trade executed through our partnered brokers."
     },
     {
       question: "How do I earn cashback?",
-      answer: "To earn cashback, simply register your trading account with JaguarForex and continue trading as usual. We'll automatically track your trading activity and accumulate your cashback rewards, which you can withdraw at any time."
+      answer: "To start earning cashback, simply register your trading account with JaguarForex. Once registered, we will automatically track your trades, and your cashback will accumulate as you continue trading."
+    },
+    {
+      question: "Where does the cashback money come from?",
+      answer: "The cashback comes from the spread or commission you pay to the broker. A portion of this is returned to us by the broker as a rebate, and we give it back to you as cashback."
     },
     {
       question: "Is there a cost to use JaguarForex services?",
-      answer: "No, JaguarForex services are completely free. We make money through our partnerships with brokers, allowing us to provide our tools and cashback program at no cost to traders."
+      answer: "No, all JaguarForex services are free. We earn through broker partnerships, which allows us to provide our tools and cashback program at no cost to our users."
     },
     {
       question: "Which brokers are supported for cashback?",
-      answer: "We support a wide range of reputable forex brokers including IC Markets, Exness, FXPro, Pepperstone, and many more. You can find the complete list of supported brokers in your dashboard after registration."
+      answer: "We currently support Exness and RoboForex, with plans to add more brokers soon. We aim to give traders more options as we grow."
     },
     {
       question: "How often can I withdraw my cashback?",
-      answer: "You can withdraw your cashback anytime as long as you've met the minimum withdrawal amount, which varies by payment method. Most withdrawals are processed within 24-48 hours."
+      answer: "You can request a withdrawal once your cashback reaches a minimum of $15. Payouts can be made through your preferred method: GCash, Crypto, Skrill, or PayPal."
     },
     {
       question: "Are the trading tools really free?",
-      answer: "Yes, all our trading tools, including EAs and indicators, are completely free to use. We believe in providing value to the trading community and helping traders succeed."
+      answer: "Yes, our trading tools—including EAs and indicators—are completely free to use. We also offer optional premium features that can be unlocked through a one-time upgrade, but they are not required to benefit from our platform."
     }
   ];
 
