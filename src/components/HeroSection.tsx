@@ -42,7 +42,7 @@ const HeroSection = () => {
           </div>
           
           <div className="hidden lg:block relative">
-            <div className="bg-jaguarblue-700/20 backdrop-blur-sm rounded-2xl border border-jaguarblue-600 p-6 animate-float shadow-xl">
+            <div className="bg-jaguarblue-800/50 backdrop-blur-sm rounded-2xl border border-jaguarblue-600 p-6 animate-float shadow-xl">
               <AnimatedTradingChart />
               
               <div className="grid grid-cols-2 gap-3 mt-4">
