@@ -25,7 +25,7 @@ const CtaSection = () => {
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button className="btn-primary flex items-center gap-2" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
-                Get Cashback <ArrowRight className="h-4 w-4" />
+                Create Account <ArrowRight className="h-4 w-4" />
               </Button>
               <Button variant="outline" className="btn-outline" onClick={() => window.location.href = "#features"}>
                 Learn More
