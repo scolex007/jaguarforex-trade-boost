@@ -10,7 +10,7 @@ import {
   ReferenceLine,
   Tooltip
 } from "recharts";
-import { TrendingUp, ChartLine } from "lucide-react";
+import { TrendingUp, ChartLine, Wallet, CircleDollarSign } from "lucide-react";
 
 // Generate initial data
 const generateInitialData = () => {
@@ -33,12 +33,12 @@ const generateInitialData = () => {
 
 // Extended trades data - 6 trades as requested
 const trades = [
-  { position: 5, profit: "+$28.50", percentage: "+2.2%", entryPoint: 1.14520, color: "#10b981" },
-  { position: 10, profit: "+$15.75", percentage: "+1.4%", entryPoint: 1.14480, color: "#10b981" },
-  { position: 15, profit: "+$32.25", percentage: "+2.8%", entryPoint: 1.14510, color: "#10b981" },
-  { position: 20, profit: "-$10.50", percentage: "-0.9%", entryPoint: 1.14460, color: "#ef4444" },
-  { position: 25, profit: "+$45.30", percentage: "+3.6%", entryPoint: 1.14440, color: "#10b981" },
-  { position: 30, profit: "+$18.20", percentage: "+1.7%", entryPoint: 1.14475, color: "#10b981" }
+  { position: 5, profit: "+$28.50", percentage: "+2.2%", entryPoint: 1.14520, color: "#10b981", cash: 5.70 },
+  { position: 10, profit: "+$15.75", percentage: "+1.4%", entryPoint: 1.14480, color: "#10b981", cash: 3.15 },
+  { position: 15, profit: "+$32.25", percentage: "+2.8%", entryPoint: 1.14510, color: "#10b981", cash: 6.45 },
+  { position: 20, profit: "-$10.50", percentage: "-0.9%", entryPoint: 1.14460, color: "#ef4444", cash: 2.10 },
+  { position: 25, profit: "+$45.30", percentage: "+3.6%", entryPoint: 1.14440, color: "#10b981", cash: 9.06 },
+  { position: 30, profit: "+$18.20", percentage: "+1.7%", entryPoint: 1.14475, color: "#10b981", cash: 3.64 }
 ];
 
 const AnimatedTradingChart = () => {
@@ -47,6 +47,10 @@ const AnimatedTradingChart = () => {
   const [showProfit, setShowProfit] = useState(false);
   const [currentTradeIndex, setCurrentTradeIndex] = useState(-1);
   const [chartCycle, setChartCycle] = useState(0);
+  const [walletBalance, setWalletBalance] = useState(2450);
+  const [cashbackTotal, setCashbackTotal] = useState(568.25);
+  const [animateWallet, setAnimateWallet] = useState(false);
+  const [animateCashback, setAnimateCashback] = useState(false);
   
   // Animation effect for the chart
   useEffect(() => {
@@ -76,19 +80,20 @@ const AnimatedTradingChart = () => {
         // Trade execution logic
         if (newIndex % 10 === 0) {
           const tradeIndex = Math.floor(newIndex / 10) % trades.length;
+          const currentTrade = trades[tradeIndex];
           
           // Mark the point where automated trading occurs
           setData(prevData => {
             const newData = [...prevData];
-            const tradePosition = trades[tradeIndex].position % prevData.length;
+            const tradePosition = currentTrade.position % prevData.length;
             
             if (newData[tradePosition]) {
               newData[tradePosition] = { 
                 ...newData[tradePosition], 
                 automated: true,
-                profit: trades[tradeIndex].profit,
-                percentage: trades[tradeIndex].percentage,
-                color: trades[tradeIndex].color
+                profit: currentTrade.profit,
+                percentage: currentTrade.percentage,
+                color: currentTrade.color
               };
             }
             
@@ -98,9 +103,31 @@ const AnimatedTradingChart = () => {
           setActiveTrade(tradeIndex);
           setShowProfit(true);
           
-          // Hide profit after 3 seconds
+          // Update wallet balance based on trade results
+          if (currentTrade.profit.startsWith('+')) {
+            setWalletBalance(prev => {
+              const profitAmount = parseFloat(currentTrade.profit.replace(/[+$]/g, ''));
+              return parseFloat((prev + profitAmount).toFixed(2));
+            });
+          } else {
+            setWalletBalance(prev => {
+              const lossAmount = parseFloat(currentTrade.profit.replace(/[-$]/g, ''));
+              return parseFloat((prev - lossAmount).toFixed(2));
+            });
+          }
+          setAnimateWallet(true);
+          
+          // Update cashback total - always increases regardless of profit/loss
+          setCashbackTotal(prev => {
+            return parseFloat((prev + currentTrade.cash).toFixed(2));
+          });
+          setAnimateCashback(true);
+          
+          // Hide profit and animations after 3 seconds
           setTimeout(() => {
             setShowProfit(false);
+            setAnimateWallet(false);
+            setAnimateCashback(false);
           }, 3000);
 
           // Increment the cycle counter when we've gone through all trades
@@ -143,7 +170,7 @@ const AnimatedTradingChart = () => {
         </div>
       </div>
       
-      <div className="relative h-[90%]">
+      <div className="relative h-[220px] mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart 
             data={data} 
@@ -210,15 +237,47 @@ const AnimatedTradingChart = () => {
           </div>
         )}
         
-        {/* Automated trading label */}
+        {/* Automated trading label - moved to be center-top instead of center */}
         {showProfit && activeTrade !== null && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-jaguarblue-800/90 border border-jaguargold/30 px-3 py-2 rounded-md animate-fade-in shadow-lg animate-pulse-border">
+          <div className="absolute top-5 left-1/2 transform -translate-x-1/2 bg-jaguarblue-800/90 border border-jaguargold/30 px-3 py-2 rounded-md animate-fade-in shadow-lg animate-pulse-border">
             <div className="text-white text-sm font-medium flex items-center">
               <span className={`h-2 w-2 rounded-full mr-2 ${trades[activeTrade].color === "#10b981" ? "bg-green-500" : "bg-red-500"}`}></span>
               Auto Trade Executed
             </div>
           </div>
         )}
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className={`bg-jaguarblue-800 p-4 rounded-md relative ${animateWallet ? 'animate-pulse-number' : ''}`}>
+          <div className="flex items-center gap-2 text-gray-400 mb-1">
+            <Wallet size={16} />
+            <p className="text-sm">Wallet Balance</p>
+          </div>
+          <p className={`text-jaguargold font-semibold text-lg ${animateWallet ? 'animate-number-change' : ''}`}>
+            ${walletBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+          </p>
+          
+          {/* Animation overlay for values */}
+          {animateWallet && (
+            <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-jaguargold/30 to-transparent animate-slide-right"></div>
+          )}
+        </div>
+        
+        <div className={`bg-jaguarblue-800 p-4 rounded-md relative ${animateCashback ? 'animate-pulse-number' : ''}`}>
+          <div className="flex items-center gap-2 text-gray-400 mb-1">
+            <CircleDollarSign size={16} />
+            <p className="text-sm">Total Cashback</p>
+          </div>
+          <p className={`text-jaguargold font-semibold text-lg ${animateCashback ? 'animate-number-change' : ''}`}>
+            ${cashbackTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+          </p>
+          
+          {/* Animation overlay for values */}
+          {animateCashback && (
+            <div className="absolute left-0 right-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-jaguargold/30 to-transparent animate-slide-right"></div>
+          )}
+        </div>
       </div>
     </div>
   );

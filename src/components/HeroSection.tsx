@@ -42,19 +42,8 @@ const HeroSection = () => {
           </div>
           
           <div className="hidden lg:block relative">
-            <div className="bg-jaguarblue-800/50 backdrop-blur-sm rounded-2xl border border-jaguarblue-600 p-6 animate-float shadow-xl">
+            <div className="bg-jaguarblue-800/50 backdrop-blur-sm rounded-2xl border border-jaguarblue-600 p-6 animate-float shadow-xl h-[380px]">
               <AnimatedTradingChart />
-              
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="bg-jaguarblue-800 p-3 rounded-md">
-                  <p className="text-xs text-gray-400">Wallet Balance</p>
-                  <p className="text-jaguargold font-semibold">$2,450.00</p>
-                </div>
-                <div className="bg-jaguarblue-800 p-3 rounded-md">
-                  <p className="text-xs text-gray-400">Total Cashback</p>
-                  <p className="text-jaguargold font-semibold">$568.25</p>
-                </div>
-              </div>
             </div>
             
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-jaguargold/20 rounded-full filter blur-3xl"></div>
