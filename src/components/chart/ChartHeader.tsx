@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ChartLine, TrendingUp } from "lucide-react";
+import { ChartLine, ArrowUp } from "lucide-react";
 
 interface ChartHeaderProps {
   lastPrice: string;
@@ -19,7 +19,7 @@ const ChartHeader: React.FC<ChartHeaderProps> = ({
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2">
         <ChartLine className="text-jaguargold" size={18} />
-        <h3 className="text-xl font-semibold gradient-text mr-2">EURUSD</h3>
+        <h3 className="text-xl font-semibold text-jaguargold mr-2">EURUSD</h3>
         <span className="text-sm text-gray-300">{lastPrice}</span>
         <span className={`text-xs ${isPositiveChange ? 'text-green-500' : 'text-red-500'} flex items-center gap-1`}>
           {isPositiveChange ? '▲' : '▼'} {Math.abs(parseFloat(priceChange)).toFixed(5)}
@@ -27,7 +27,7 @@ const ChartHeader: React.FC<ChartHeaderProps> = ({
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-400">Cycle {chartCycle + 1}</span>
-        <TrendingUp className={`${isPositiveChange ? 'text-green-500' : 'text-red-500'}`} size={18} />
+        <ArrowUp className={`${isPositiveChange ? 'text-green-500' : 'text-red-500'}`} size={18} />
       </div>
     </div>
   );

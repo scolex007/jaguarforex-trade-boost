@@ -1,17 +1,17 @@
 
 import React from "react";
 import { 
-  ComposedChart, 
+  LineChart, 
+  Line,
   XAxis, 
   YAxis, 
   CartesianGrid, 
   ResponsiveContainer,
   ReferenceLine,
   Tooltip,
-  Bar
+  Dot
 } from "recharts";
 import { CandlestickData } from "@/utils/tradingChartUtils";
-import CandlestickRenderer from "./CandlestickRenderer";
 
 interface CandlestickChartProps {
   data: CandlestickData[];
@@ -21,7 +21,7 @@ interface CandlestickChartProps {
 const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, verticalLineIndex }) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <ComposedChart 
+      <LineChart 
         data={data} 
         margin={{ top: 10, right: 30, bottom: 10, left: 5 }}
         className="bg-jaguarblue-900/30 rounded-lg"
@@ -29,10 +29,10 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, verticalLineI
         <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
         <XAxis dataKey="time" tick={false} />
         <YAxis 
-          domain={['dataMin - 0.0008', 'dataMax + 0.0008']} 
+          domain={['dataMin - 0.0005', 'dataMax + 0.0005']} 
           tick={{ fill: '#9ca3af', fontSize: 10 }} 
           width={40} 
-          tickFormatter={(value) => value.toFixed(5).slice(-5)}
+          tickFormatter={(value) => value.toFixed(4).slice(-4)}
           axisLine={{ stroke: '#1e293b' }}
         />
         <Tooltip 
@@ -40,11 +40,8 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, verticalLineI
             if (active && payload && payload.length) {
               return (
                 <div className="bg-jaguarblue-800/90 border border-jaguarblue-700 p-2 rounded-md">
-                  <p className="text-white text-xs font-medium">OHLC</p>
-                  <p className="text-white text-xs">O: {payload[0].payload.open}</p>
-                  <p className="text-white text-xs">H: {payload[0].payload.high}</p>
-                  <p className="text-white text-xs">L: {payload[0].payload.low}</p>
-                  <p className="text-white text-xs">C: {payload[0].payload.close}</p>
+                  <p className="text-white text-xs font-medium">EURUSD</p>
+                  <p className="text-white text-xs">Price: {payload[0].value}</p>
                 </div>
               );
             }
@@ -52,12 +49,14 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, verticalLineI
           }}
         />
         
-        {/* Render custom candlesticks using Bar for positioning */}
-        <Bar 
-          dataKey="high" 
-          fill="transparent" 
-          stroke="transparent"
-          shape={(props) => <CandlestickRenderer {...props} data={data} />}
+        {/* Main price line */}
+        <Line 
+          type="monotone" 
+          dataKey="close" 
+          stroke="#daa520" 
+          strokeWidth={2} 
+          dot={false}
+          activeDot={{ r: 4, fill: "#daa520" }}
           isAnimationActive={false}
         />
         
@@ -69,6 +68,7 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, verticalLineI
           strokeWidth={1.5}
         />
         
+        {/* Trade markers */}
         {data.map((point, index) => (
           point.automated && (
             <ReferenceLine 
@@ -80,7 +80,26 @@ const CandlestickChart: React.FC<CandlestickChartProps> = ({ data, verticalLineI
             />
           )
         ))}
-      </ComposedChart>
+
+        {/* Add dots for trade points with a white border */}
+        {data.map((point, index) => (
+          point.automated && (
+            <Line
+              key={`dot-${index}`}
+              dataKey="close"
+              data={[point]}
+              stroke="none"
+              dot={{
+                r: 5, 
+                fill: point.color || "#10b981",
+                stroke: "white",
+                strokeWidth: 2
+              }}
+              isAnimationActive={false}
+            />
+          )
+        ))}
+      </LineChart>
     </ResponsiveContainer>
   );
 };

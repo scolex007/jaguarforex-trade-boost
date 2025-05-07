@@ -14,7 +14,7 @@ export const useTradingChart = () => {
   const [animateCashback, setAnimateCashback] = useState(false);
   
   // Reference for the previous value to create smoother transitions
-  const prevValueRef = useRef(data[data.length - 1]?.close || 1.14200);
+  const prevValueRef = useRef(data[data.length - 1]?.close || 1.3921);
   
   // Animation effect for the chart with smoother transitions
   useEffect(() => {
@@ -26,36 +26,25 @@ export const useTradingChart = () => {
         const lastPoint = prevData[prevData.length - 1];
         const prevValue = prevValueRef.current;
         
-        // Create more realistic candlestick data with bullish bias
-        const bullishBias = Math.random() > 0.4 ? 1 : -1;
-        const baseChange = (Math.random() * 0.00020) * bullishBias;
+        // Create a bullish trend with some volatility
+        const bullishBias = Math.random() > 0.3 ? 1 : -1;
+        const baseChange = (Math.random() * 0.0004) * bullishBias;
         
-        // Calculate Open, High, Low, Close values
-        const open = prevValue;
-        const close = parseFloat((prevValue + baseChange).toFixed(5));
-        
-        // Make high/low less extreme to avoid touching borders
-        const highExtra = Math.random() * 0.00020 * 0.3;
-        const lowExtra = Math.random() * 0.00020 * 0.3;
-        
-        const high = parseFloat((Math.max(open, close) + highExtra).toFixed(5));
-        const low = parseFloat((Math.min(open, close) - lowExtra).toFixed(5));
+        // Calculate value with a slight upward bias
+        let close = parseFloat((prevValue + baseChange + 0.0001).toFixed(4));
         
         // Update the previous value for next iteration
         prevValueRef.current = close;
         
-        // Determine if candle is bullish (green) or bearish (red)
-        const isPositive = close >= open;
-        
         // Create the new data point
         const newData = [...prevData.slice(1), { 
           time: lastPoint.time + 1, 
-          open: open,
-          high: high,
-          low: low,
+          open: close, // For compatibility
+          high: close, // For compatibility
+          low: close,  // For compatibility
           close: close,
           value: close, // Keep for compatibility
-          isPositive: isPositive,
+          isPositive: true, 
           automated: false
         }];
         
@@ -138,7 +127,7 @@ export const useTradingChart = () => {
   }, []);
 
   // Calculate price change and other derived data
-  const lastPrice = data[data.length - 1]?.close.toFixed(5) || "0.00000";
+  const lastPrice = data[data.length - 1]?.close.toFixed(4) || "0.0000";
   const priceChange = ((data[data.length - 1]?.close || 0) - (data[0]?.close || 0)).toFixed(5);
   const isPositiveChange = parseFloat(priceChange) >= 0;
   

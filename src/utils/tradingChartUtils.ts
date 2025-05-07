@@ -1,43 +1,38 @@
 
-// Generate initial candlestick data with OHLC values showing a bullish trend
+// Generate initial data with a bullish trend for a line chart
 export const generateInitialData = () => {
   const data = [];
-  // Starting price at a higher value to avoid touching bottom
-  let currentValue = 1.14200;
+  // Starting price based on the reference image
+  let currentValue = 1.3921;
   // Reduced volatility for smoother movements
-  const volatility = 0.00020;
+  const volatility = 0.0004;
   
-  // Generate data points for candlesticks with bullish bias
+  // Generate data points for line chart with bullish bias (70% chance of going up)
   for (let i = 0; i < 30; i++) {
-    // Create more realistic candlestick data with bullish bias (60% chance of going up)
-    const bullishBias = Math.random() > 0.4 ? 1 : -1;
+    // Create a bullish trend with some volatility
+    const bullishBias = Math.random() > 0.3 ? 1 : -1;
     const baseChange = (Math.random() * volatility) * bullishBias;
     
-    // Calculate Open, High, Low, Close values
-    const open = currentValue;
-    const close = parseFloat((currentValue + baseChange).toFixed(5));
+    // Calculate value with a slight upward bias
+    let close = parseFloat((currentValue + baseChange).toFixed(4));
     
-    // Make high/low less extreme to avoid touching borders
-    const highExtra = Math.random() * volatility * 0.3;
-    const lowExtra = Math.random() * volatility * 0.3;
-    
-    const high = parseFloat((Math.max(open, close) + highExtra).toFixed(5));
-    const low = parseFloat((Math.min(open, close) - lowExtra).toFixed(5));
+    // Add a small consistent upward trend
+    if (i > 0) {
+      close += 0.0001;
+    }
     
     // Update the current value for next iteration
     currentValue = close;
     
-    // Determine if candle is bullish (green) or bearish (red)
-    const isPositive = close >= open;
-    
+    // For a line chart, we just need the close value
     data.push({
       time: i,
-      open: open,
-      high: high,
-      low: low,
+      open: close, // Keep for compatibility
+      high: close, // Keep for compatibility
+      low: close,  // Keep for compatibility
       close: close,
       value: close, // For compatibility with existing code
-      isPositive: isPositive,
+      isPositive: true,
       automated: false
     });
   }
@@ -47,12 +42,12 @@ export const generateInitialData = () => {
 
 // Extended trades data - 6 trades as requested
 export const trades = [
-  { position: 5, profit: "+$28.50", percentage: "+2.2%", entryPoint: 1.14520, color: "#10b981", cash: 5.70 },
-  { position: 10, profit: "+$15.75", percentage: "+1.4%", entryPoint: 1.14480, color: "#10b981", cash: 3.15 },
-  { position: 15, profit: "+$32.25", percentage: "+2.8%", entryPoint: 1.14510, color: "#10b981", cash: 6.45 },
-  { position: 20, profit: "-$10.50", percentage: "-0.9%", entryPoint: 1.14460, color: "#ef4444", cash: 2.10 },
-  { position: 25, profit: "+$45.30", percentage: "+3.6%", entryPoint: 1.14440, color: "#10b981", cash: 9.06 },
-  { position: 30, profit: "+$18.20", percentage: "+1.7%", entryPoint: 1.14475, color: "#10b981", cash: 3.64 }
+  { position: 5, profit: "+$28.50", percentage: "+2.2%", entryPoint: 1.3941, color: "#10b981", cash: 5.70 },
+  { position: 10, profit: "+$15.75", percentage: "+1.4%", entryPoint: 1.3961, color: "#10b981", cash: 3.15 },
+  { position: 15, profit: "+$32.25", percentage: "+2.8%", entryPoint: 1.3981, color: "#10b981", cash: 6.45 },
+  { position: 20, profit: "-$10.50", percentage: "-0.9%", entryPoint: 1.4001, color: "#ef4444", cash: 2.10 },
+  { position: 25, profit: "+$45.30", percentage: "+3.6%", entryPoint: 1.4021, color: "#10b981", cash: 9.06 },
+  { position: 30, profit: "+$18.20", percentage: "+1.7%", entryPoint: 1.4041, color: "#10b981", cash: 3.64 }
 ];
 
 export interface TradeData {
