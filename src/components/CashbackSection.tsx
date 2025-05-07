@@ -1,16 +1,36 @@
 
 import { Button } from "@/components/ui/button";
-import { DollarSign, Copy, CheckCircle, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { DollarSign, CheckCircle, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const CashbackSection = () => {
-  const [copied, setCopied] = useState(false);
+  const [volume, setVolume] = useState<number>(100);
+  const [selectedBroker, setSelectedBroker] = useState<string>("exness");
   
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText("https://my.jaguarforex.com/auth/register/jaguarforex");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  // Define broker rates
+  const brokerRates = {
+    exness: 5,
+    roboforex: 4
   };
+  
+  // Calculate cashback based on volume and selected broker
+  const calculateCashback = () => {
+    const rate = brokerRates[selectedBroker as keyof typeof brokerRates];
+    const monthlyCashback = volume * rate;
+    const annualCashback = monthlyCashback * 12;
+    
+    return {
+      monthly: monthlyCashback,
+      annual: annualCashback
+    };
+  };
+  
+  const cashback = calculateCashback();
+
+  // Recalculate when inputs change
+  useEffect(() => {
+    calculateCashback();
+  }, [volume, selectedBroker]);
 
   return (
     <section id="cashback" className="py-16 md:py-24 bg-jaguarblue-900 relative overflow-hidden">
@@ -31,46 +51,31 @@ const CashbackSection = () => {
                   type="number" 
                   className="w-full p-3 rounded-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white"
                   placeholder="Enter trading volume"
-                  defaultValue="100"
+                  value={volume}
+                  onChange={(e) => setVolume(Number(e.target.value))}
                 />
               </div>
               
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-2">Select Broker</label>
-                <select className="w-full p-3 rounded-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white">
-                  <option>IC Markets ($7 per lot)</option>
-                  <option>Exness ($5 per lot)</option>
-                  <option>FXPro ($6 per lot)</option>
-                  <option>Pepperstone ($5.5 per lot)</option>
+                <select 
+                  className="w-full p-3 rounded-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white"
+                  value={selectedBroker}
+                  onChange={(e) => setSelectedBroker(e.target.value)}
+                >
+                  <option value="exness">Exness ($5 per lot)</option>
+                  <option value="roboforex">Roboforex ($4 per lot)</option>
                 </select>
               </div>
               
               <div className="p-4 bg-jaguarblue-700 rounded-lg mb-6">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300">Estimated Monthly Cashback:</span>
-                  <span className="text-2xl font-bold text-jaguargold">$700</span>
+                  <span className="text-2xl font-bold text-jaguargold">${cashback.monthly}</span>
                 </div>
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-gray-300">Estimated Annual Cashback:</span>
-                  <span className="text-lg font-bold text-jaguargold">$8,400</span>
-                </div>
-              </div>
-              
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Your Referral Link</label>
-                <div className="flex">
-                  <input 
-                    type="text" 
-                    className="flex-grow p-3 rounded-l-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white"
-                    value="https://my.jaguarforex.com/auth/register/jaguarforex"
-                    readOnly
-                  />
-                  <button 
-                    onClick={handleCopyLink}
-                    className="p-3 rounded-r-lg bg-jaguarblue-600 text-white border border-jaguarblue-600"
-                  >
-                    {copied ? <CheckCircle className="h-5 w-5 text-green-500" /> : <Copy className="h-5 w-5" />}
-                  </button>
+                  <span className="text-lg font-bold text-jaguargold">${cashback.annual}</span>
                 </div>
               </div>
               
