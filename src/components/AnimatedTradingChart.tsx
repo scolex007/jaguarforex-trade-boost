@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { 
   ComposedChart, 
@@ -33,8 +34,8 @@ const generateInitialData = () => {
     const highExtra = Math.random() * volatility * 0.3;
     const lowExtra = Math.random() * volatility * 0.3;
     
-    const high = parseFloat(Math.max(open, close) + highExtra).toFixed(5);
-    const low = parseFloat(Math.min(open, close) - lowExtra).toFixed(5);
+    const high = parseFloat((Math.max(open, close) + highExtra).toFixed(5));
+    const low = parseFloat((Math.min(open, close) - lowExtra).toFixed(5));
     
     // Update the current value for next iteration
     currentValue = close;
@@ -45,8 +46,8 @@ const generateInitialData = () => {
     data.push({
       time: i,
       open: open,
-      high: parseFloat(high),
-      low: parseFloat(low),
+      high: high,
+      low: low,
       close: close,
       value: close, // For compatibility with existing code
       isPositive: isPositive,
