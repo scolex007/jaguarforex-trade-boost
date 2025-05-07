@@ -1,38 +1,50 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { 
-  LineChart, 
-  Line, 
+  ComposedChart, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   ResponsiveContainer,
   ReferenceLine,
-  Tooltip
+  Tooltip,
+  Bar
 } from "recharts";
 import { TrendingUp, ChartLine, Wallet, CircleDollarSign } from "lucide-react";
 
-// Generate initial data with smoother price movement
+// Generate initial candlestick data with OHLC values
 const generateInitialData = () => {
   const data = [];
   // Starting price value
   let currentValue = 1.13919;
   // Reduced volatility for smoother movements
-  const volatility = 0.00020;
+  const volatility = 0.00025;
   
-  // Generate more points for smoother animation
+  // Generate data points for candlesticks
   for (let i = 0; i < 30; i++) {
-    // Use a more controlled random factor for smoother movement
-    // This creates a smoother curve by making each point related to the previous one
-    const trend = Math.cos(i / 5) * volatility;
-    const noise = (Math.random() * volatility / 2) - (volatility / 4);
-    // Combine trend and small noise for organic but smoother movement
-    const change = trend + noise;
-    currentValue += change;
+    // Create more realistic candlestick data
+    const baseChange = (Math.random() * volatility) - (volatility / 2);
+    
+    // Calculate Open, High, Low, Close values
+    const open = currentValue;
+    const close = parseFloat((currentValue + baseChange).toFixed(5));
+    const high = parseFloat(Math.max(open, close + (Math.random() * volatility * 0.5)).toFixed(5));
+    const low = parseFloat(Math.min(open, close - (Math.random() * volatility * 0.5)).toFixed(5));
+    
+    // Update the current value for next iteration
+    currentValue = close;
+    
+    // Determine if candle is bullish (green) or bearish (red)
+    const isPositive = close >= open;
     
     data.push({
       time: i,
-      value: parseFloat(currentValue.toFixed(5)),
+      open: open,
+      high: high,
+      low: low,
+      close: close,
+      value: close, // For compatibility with existing code
+      isPositive: isPositive,
       automated: false
     });
   }
@@ -56,13 +68,13 @@ const AnimatedTradingChart = () => {
   const [showProfit, setShowProfit] = useState(false);
   const [currentTradeIndex, setCurrentTradeIndex] = useState(-1);
   const [chartCycle, setChartCycle] = useState(0);
-  const [walletBalance, setWalletBalance] = useState(2450);
-  const [cashbackTotal, setCashbackTotal] = useState(568.25);
+  const [walletBalance, setWalletBalance] = useState(2915.00);
+  const [cashbackTotal, setCashbackTotal] = useState(673.85);
   const [animateWallet, setAnimateWallet] = useState(false);
   const [animateCashback, setAnimateCashback] = useState(false);
   
   // Reference for the previous value to create smoother transitions
-  const prevValueRef = useRef(data[data.length - 1]?.value || 1.13919);
+  const prevValueRef = useRef(data[data.length - 1]?.close || 1.13919);
   
   // Animation effect for the chart with smoother transitions
   useEffect(() => {
@@ -74,19 +86,30 @@ const AnimatedTradingChart = () => {
         const lastPoint = prevData[prevData.length - 1];
         const prevValue = prevValueRef.current;
         
-        // Create smoother transitions by having small incremental changes
-        // Use a combination of trend and tiny random noise
-        const trendFactor = Math.sin(Date.now() / 10000) * 0.00008;
-        const noise = (Math.random() * 0.00010) - 0.00005;
-        const change = trendFactor + noise;
+        // Create more realistic candlestick data
+        const baseChange = (Math.random() * 0.00025) - (0.00025 / 2);
         
-        // Calculate new value with smoother transition from previous value
-        const newValue = parseFloat((prevValue + change).toFixed(5));
-        prevValueRef.current = newValue;
+        // Calculate Open, High, Low, Close values
+        const open = prevValue;
+        const close = parseFloat((prevValue + baseChange).toFixed(5));
+        const high = parseFloat(Math.max(open, close + (Math.random() * 0.00025 * 0.5)).toFixed(5));
+        const low = parseFloat(Math.min(open, close - (Math.random() * 0.00025 * 0.5)).toFixed(5));
         
+        // Update the previous value for next iteration
+        prevValueRef.current = close;
+        
+        // Determine if candle is bullish (green) or bearish (red)
+        const isPositive = close >= open;
+        
+        // Create the new data point
         const newData = [...prevData.slice(1), { 
           time: lastPoint.time + 1, 
-          value: newValue,
+          open: open,
+          high: high,
+          low: low,
+          close: close,
+          value: close, // Keep for compatibility
+          isPositive: isPositive,
           automated: false
         }];
         
@@ -169,12 +192,60 @@ const AnimatedTradingChart = () => {
   }, []);
   
   // Get the last data point for current price display
-  const lastPrice = data[data.length - 1]?.value.toFixed(5);
-  const priceChange = (data[data.length - 1]?.value - data[0]?.value).toFixed(5);
+  const lastPrice = data[data.length - 1]?.close.toFixed(5);
+  const priceChange = (data[data.length - 1]?.close - data[0]?.close).toFixed(5);
   const isPositiveChange = parseFloat(priceChange) >= 0;
   
   // Calculate the precise index for where 75% of the chart width would be
-  const verticalLineIndex = Math.round(data.length * 0.75);
+  // Adjusted to match the image by positioning the vertical line at ~70% of chart width
+  const verticalLineIndex = Math.round(data.length * 0.7);
+  
+  // Custom candle renderer
+  const renderCandlestick = (props: any) => {
+    const { x, y, width, height, index } = props;
+    
+    // Apply styles based on whether it's a positive or negative candle
+    const dataPoint = data[index];
+    if (!dataPoint) return null;
+    
+    const isPositiveCandle = dataPoint.isPositive;
+    const candleColor = isPositiveCandle ? '#10b981' : '#ef4444';
+    const candleWidth = 6; // Width of the candle bar
+    
+    // Calculate positioning 
+    const candleX = x - (candleWidth / 2);
+    
+    // Calculate height based on open/close values
+    const openY = y + height - ((dataPoint.open - data[index].low) / (data[index].high - data[index].low)) * height;
+    const closeY = y + height - ((dataPoint.close - data[index].low) / (data[index].high - data[index].low)) * height;
+    
+    // Calculate high/low lines
+    const highY = y;
+    const lowY = y + height;
+    
+    return (
+      <g key={`candle-${index}`}>
+        {/* Wick (high to low vertical line) */}
+        <line 
+          x1={x} 
+          y1={highY} 
+          x2={x} 
+          y2={lowY} 
+          stroke={candleColor} 
+          strokeWidth={1}
+        />
+        
+        {/* Candle body */}
+        <rect 
+          x={candleX} 
+          y={isPositiveCandle ? closeY : openY}
+          width={candleWidth} 
+          height={Math.abs(closeY - openY) || 1} // Ensure minimum height of 1px
+          fill={candleColor}
+        />
+      </g>
+    );
+  };
   
   return (
     <div className="relative h-full">
@@ -195,9 +266,9 @@ const AnimatedTradingChart = () => {
       
       <div className="relative h-[220px] mb-4">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart 
+          <ComposedChart 
             data={data} 
-            margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            margin={{ top: 5, right: 30, bottom: 5, left: 5 }}
             className="bg-jaguarblue-900/30 rounded-lg"
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
@@ -214,24 +285,28 @@ const AnimatedTradingChart = () => {
                 if (active && payload && payload.length) {
                   return (
                     <div className="bg-jaguarblue-800/90 border border-jaguarblue-700 p-2 rounded-md">
-                      <p className="text-white text-xs">{payload[0].value}</p>
+                      <p className="text-white text-xs font-medium">OHLC</p>
+                      <p className="text-white text-xs">O: {payload[0].payload.open}</p>
+                      <p className="text-white text-xs">H: {payload[0].payload.high}</p>
+                      <p className="text-white text-xs">L: {payload[0].payload.low}</p>
+                      <p className="text-white text-xs">C: {payload[0].payload.close}</p>
                     </div>
                   );
                 }
                 return null;
               }}
             />
-            <Line 
-              type="monotone" 
-              dataKey="value" 
-              stroke="#D4AF37" 
-              strokeWidth={2} 
-              dot={false} 
-              activeDot={{ r: 4, fill: '#D4AF37' }}
-              animationDuration={300}
+            
+            {/* Render custom candlesticks using Bar for positioning */}
+            <Bar 
+              dataKey="high" 
+              fill="transparent" 
+              stroke="transparent"
+              shape={renderCandlestick}
+              isAnimationActive={false}
             />
             
-            {/* Vertical line at approximately 75% of chart width */}
+            {/* Vertical line at approximately 70% of chart width */}
             <ReferenceLine 
               x={verticalLineIndex} 
               stroke="#00b8d9" 
@@ -250,7 +325,7 @@ const AnimatedTradingChart = () => {
                 />
               )
             ))}
-          </LineChart>
+          </ComposedChart>
         </ResponsiveContainer>
         
         {/* Profit indicators */}
