@@ -8,8 +8,7 @@ import {
   CartesianGrid, 
   ResponsiveContainer,
   ReferenceLine,
-  Tooltip,
-  Dot
+  Tooltip
 } from "recharts";
 import { CandlestickData } from "@/utils/tradingChartUtils";
 
