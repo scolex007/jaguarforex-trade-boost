@@ -1,10 +1,36 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, User } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Function to open authentication popup
+  const openAuthPopup = (url: string) => {
+    const popup = window.open(url, "AuthPopup", "width=500,height=600");
+    
+    if (popup) {
+      const timer = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(timer);
+          window.location.reload(); // Refresh to update auth state
+        }
+      }, 500);
+    }
+  };
+  
+  // Listen for messages from popup
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data === "loggedIn") {
+        window.location.reload(); // Refresh to update auth state
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   return (
     <nav className="bg-jaguarblue-800/95 sticky top-0 z-50 backdrop-blur-sm border-b border-jaguarblue-700 shadow-lg">
@@ -41,10 +67,19 @@ const Navbar = () => {
 
           {/* Login/Register Buttons */}
           <div className="hidden md:flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="border-jaguargold text-jaguargold hover:text-jaguarblue-900" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/login"}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-jaguargold text-jaguargold hover:text-jaguarblue-900"
+              onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/login")}
+            >
               Login
             </Button>
-            <Button size="sm" className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
+            <Button 
+              size="sm" 
+              className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+              onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/register/jaguarforex")}
+            >
               Register
             </Button>
           </div>
@@ -70,10 +105,19 @@ const Navbar = () => {
             <a href="#" className="block py-2 px-4 hover:bg-jaguarblue-700">Resources</a>
             
             <div className="mt-4 flex flex-col space-y-2 px-4">
-              <Button variant="outline" size="sm" className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/login"}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full"
+                onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/login")}
+              >
                 Login
               </Button>
-              <Button size="sm" className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
+              <Button 
+                size="sm" 
+                className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full"
+                onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/register/jaguarforex")}
+              >
                 Register
               </Button>
             </div>

@@ -3,6 +3,20 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const CtaSection = () => {
+  // Function to open authentication popup
+  const openAuthPopup = (url: string) => {
+    const popup = window.open(url, "AuthPopup", "width=500,height=600");
+    
+    if (popup) {
+      const timer = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(timer);
+          window.location.reload(); // Refresh to update auth state
+        }
+      }, 500);
+    }
+  };
+
   return (
     <section className="py-16 relative overflow-hidden">
       <div className="container mx-auto px-4">
@@ -24,7 +38,10 @@ const CtaSection = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="btn-primary flex items-center gap-2" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
+              <Button 
+                className="btn-primary flex items-center gap-2"
+                onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/register/jaguarforex")}
+              >
                 Create Account <ArrowRight className="h-4 w-4" />
               </Button>
               <Button variant="outline" className="btn-outline" onClick={() => window.location.href = "#features"}>
