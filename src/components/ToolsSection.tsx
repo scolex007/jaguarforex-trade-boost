@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Download, TrendingUp, BarChart3, LineChart, Gauge, Download as DownloadIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ToolsSection = () => {
   const tools = [
@@ -53,8 +54,10 @@ const ToolsSection = () => {
             </div>
             
             <div className="mt-8">
-              <Button className="btn-primary flex items-center gap-2">
-                Browse All Tools <DownloadIcon className="h-4 w-4" />
+              <Button className="btn-primary flex items-center gap-2" asChild>
+                <Link to="/tools">
+                  Browse All Tools <DownloadIcon className="h-4 w-4" />
+                </Link>
               </Button>
             </div>
           </div>
