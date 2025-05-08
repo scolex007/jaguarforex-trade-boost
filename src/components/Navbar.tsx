@@ -6,9 +6,19 @@ import { Menu, X, ChevronDown, User } from "lucide-react";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // Function to open authentication popup
+  // Function to open authentication popup centered on screen
   const openAuthPopup = (url: string) => {
-    const popup = window.open(url, "AuthPopup", "width=500,height=600");
+    // Calculate center position
+    const width = 500;
+    const height = 600;
+    const left = window.screen.width / 2 - width / 2;
+    const top = window.screen.height / 2 - height / 2;
+    
+    const popup = window.open(
+      url, 
+      "AuthPopup", 
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
     
     if (popup) {
       const timer = setInterval(() => {
