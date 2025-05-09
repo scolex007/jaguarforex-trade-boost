@@ -1,32 +1,9 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const CtaSection = () => {
-  // Function to open authentication popup centered on screen
-  const openAuthPopup = (url: string) => {
-    // Calculate center position
-    const width = 500;
-    const height = 600;
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
-    
-    const popup = window.open(
-      url, 
-      "AuthPopup", 
-      `width=${width},height=${height},left=${left},top=${top}`
-    );
-    
-    if (popup) {
-      const timer = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(timer);
-          window.location.reload(); // Refresh to update auth state
-        }
-      }, 500);
-    }
-  };
-
   return (
     <section className="py-16 relative overflow-hidden">
       <div className="container mx-auto px-4">
@@ -50,12 +27,14 @@ const CtaSection = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 className="btn-primary flex items-center gap-2"
-                onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/register/jaguarforex")}
+                asChild
               >
-                Create Account <ArrowRight className="h-4 w-4" />
+                <Link to="/register">
+                  Create Account <ArrowRight className="h-4 w-4" />
+                </Link>
               </Button>
-              <Button variant="outline" className="btn-outline" onClick={() => window.location.href = "#features"}>
-                Learn More
+              <Button variant="outline" className="btn-outline" asChild>
+                <a href="#features">Learn More</a>
               </Button>
             </div>
           </div>

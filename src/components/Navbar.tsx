@@ -1,46 +1,35 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, User } from "lucide-react";
+import { Menu, X, ChevronDown, User, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
   
-  // Function to open authentication popup centered on screen
-  const openAuthPopup = (url: string) => {
-    // Calculate center position
-    const width = 500;
-    const height = 600;
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
-    
-    const popup = window.open(
-      url, 
-      "AuthPopup", 
-      `width=${width},height=${height},left=${left},top=${top}`
-    );
-    
-    if (popup) {
-      const timer = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(timer);
-          window.location.reload(); // Refresh to update auth state
-        }
-      }, 500);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
-  
-  // Listen for messages from popup
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data === "loggedIn") {
-        window.location.reload(); // Refresh to update auth state
-      }
-    };
 
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
+  // Close menus when clicked outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setIsUserMenuOpen(false);
+    };
+    
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
   }, []);
+  
+  const toggleUserMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
 
   return (
     <nav className="bg-jaguarblue-800/95 sticky top-0 z-50 backdrop-blur-sm border-b border-jaguarblue-700 shadow-lg">
@@ -48,19 +37,19 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <span className="text-2xl font-bold gradient-text">
                 JaguarForex
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
-            <a href="#features" className="nav-item">Features</a>
-            <a href="#tools" className="nav-item">Trading Tools</a>
-            <a href="#cashback" className="nav-item">Cashback</a>
-            <a href="#faq" className="nav-item">FAQ</a>
+            <a href="/#features" className="nav-item">Features</a>
+            <a href="/#tools" className="nav-item">Trading Tools</a>
+            <a href="/#cashback" className="nav-item">Cashback</a>
+            <a href="/#faq" className="nav-item">FAQ</a>
             
             <div className="relative group ml-2">
               <button className="nav-item flex items-center">
@@ -75,23 +64,58 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Login/Register Buttons */}
+          {/* Login/Register Buttons or User Menu */}
           <div className="hidden md:flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="border-jaguargold text-jaguargold hover:text-jaguarblue-900"
-              onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/login")}
-            >
-              Login
-            </Button>
-            <Button 
-              size="sm" 
-              className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
-              onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/register/jaguarforex")}
-            >
-              Register
-            </Button>
+            {isAuthenticated ? (
+              <div className="relative">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 flex items-center gap-2"
+                  onClick={toggleUserMenu}
+                >
+                  <User size={16} />
+                  {user?.name || 'Account'}
+                  <ChevronDown size={14} />
+                </Button>
+                
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-jaguarblue-800 border border-jaguarblue-700 rounded-md shadow-lg z-50">
+                    <Link to="/dashboard" className="block px-4 py-2 hover:bg-jaguarblue-700">
+                      Dashboard
+                    </Link>
+                    <Link to="/profile" className="block px-4 py-2 hover:bg-jaguarblue-700">
+                      Profile Settings
+                    </Link>
+                    <button 
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 hover:bg-jaguarblue-700 flex items-center"
+                    >
+                      <LogOut size={14} className="mr-2" /> 
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-jaguargold text-jaguargold hover:text-jaguarblue-900"
+                  asChild
+                >
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button 
+                  size="sm" 
+                  className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+                  asChild
+                >
+                  <Link to="/register">Register</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -108,28 +132,45 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden mt-2 py-2">
-            <a href="#features" className="block py-2 px-4 hover:bg-jaguarblue-700">Features</a>
-            <a href="#tools" className="block py-2 px-4 hover:bg-jaguarblue-700">Trading Tools</a>
-            <a href="#cashback" className="block py-2 px-4 hover:bg-jaguarblue-700">Cashback</a>
-            <a href="#faq" className="block py-2 px-4 hover:bg-jaguarblue-700">FAQ</a>
+            <a href="/#features" className="block py-2 px-4 hover:bg-jaguarblue-700">Features</a>
+            <a href="/#tools" className="block py-2 px-4 hover:bg-jaguarblue-700">Trading Tools</a>
+            <a href="/#cashback" className="block py-2 px-4 hover:bg-jaguarblue-700">Cashback</a>
+            <a href="/#faq" className="block py-2 px-4 hover:bg-jaguarblue-700">FAQ</a>
             <a href="#" className="block py-2 px-4 hover:bg-jaguarblue-700">Resources</a>
             
             <div className="mt-4 flex flex-col space-y-2 px-4">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full"
-                onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/login")}
-              >
-                Login
-              </Button>
-              <Button 
-                size="sm" 
-                className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full"
-                onClick={() => openAuthPopup("https://my.jaguarforex.com/auth/register/jaguarforex")}
-              >
-                Register
-              </Button>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/dashboard" className="block py-2 hover:bg-jaguarblue-700">
+                    Dashboard
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="block py-2 hover:bg-jaguarblue-700 flex items-center"
+                  >
+                    <LogOut size={14} className="mr-2" /> 
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full"
+                    asChild
+                  >
+                    <Link to="/login">Login</Link>
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full"
+                    asChild
+                  >
+                    <Link to="/register">Register</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}
