@@ -12,6 +12,8 @@ import { Eye, EyeOff } from "lucide-react";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
+import CountrySelect from '@/components/CountrySelect';
+import PhoneInput from '@/components/PhoneInput';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,13 +21,14 @@ const Register = () => {
     last_name: '',
     username: '',
     email: '',
-    password: '',
-    repassword: '',
     country: '',
     mobile: '',
+    password: '',
+    repassword: '',
     sponsor: '',
     tos: false
   });
+  const [dialCode, setDialCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -71,6 +74,39 @@ const Register = () => {
     }
   };
 
+  const handleCountryChange = (code: string, newDialCode: string) => {
+    setFormData(prev => ({
+      ...prev,
+      country: code
+    }));
+    setDialCode(newDialCode);
+    
+    // Clear error when user selects a country
+    if (errors.country) {
+      setErrors(prev => {
+        const newErrors = {...prev};
+        delete newErrors.country;
+        return newErrors;
+      });
+    }
+  };
+
+  const handleMobileChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      mobile: value
+    }));
+    
+    // Clear error when user types a mobile number
+    if (errors.mobile) {
+      setErrors(prev => {
+        const newErrors = {...prev};
+        delete newErrors.mobile;
+        return newErrors;
+      });
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
@@ -99,6 +135,10 @@ const Register = () => {
     } else if (!isValidEmail(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
+
+    if (!formData.country) {
+      newErrors.country = "Please select your country";
+    }
     
     if (!formData.password) {
       newErrors.password = "Password is required";
@@ -108,10 +148,6 @@ const Register = () => {
     
     if (formData.password !== formData.repassword) {
       newErrors.repassword = "Passwords don't match";
-    }
-    
-    if (!formData.country) {
-      newErrors.country = "Please select your country";
     }
     
     if (!formData.tos) {
@@ -297,6 +333,24 @@ const Register = () => {
                   {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                 </div>
 
+                <div>
+                  <CountrySelect
+                    value={formData.country}
+                    onChange={handleCountryChange}
+                    required
+                    error={errors.country}
+                  />
+                </div>
+
+                <div>
+                  <PhoneInput
+                    value={formData.mobile}
+                    onChange={handleMobileChange}
+                    dialCode={dialCode}
+                    error={errors.mobile}
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-gray-200">Password</Label>
                   <div className="relative">
@@ -345,40 +399,6 @@ const Register = () => {
                     </button>
                   </div>
                   {errors.repassword && <p className="text-red-500 text-sm">{errors.repassword}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="country" className="text-gray-200">Country</Label>
-                  <select
-                    id="country"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    required
-                    className={`w-full h-10 rounded-md border border-jaguarblue-600 bg-jaguarblue-800 px-3 py-2 text-base text-white ${errors.country ? 'border-red-500' : ''}`}
-                  >
-                    <option value="">Select a country</option>
-                    <option value="US">United States</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                    <option value="AU">Australia</option>
-                    <option value="OTHER">Other</option>
-                  </select>
-                  {errors.country && <p className="text-red-500 text-sm">{errors.country}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="mobile" className="text-gray-200">Mobile Number</Label>
-                  <Input
-                    id="mobile"
-                    name="mobile"
-                    type="tel"
-                    placeholder="Enter your mobile number"
-                    value={formData.mobile}
-                    onChange={handleChange}
-                    className="bg-jaguarblue-800 border-jaguarblue-600"
-                    data-lpignore="true"
-                  />
                 </div>
 
                 <div className="col-span-full space-y-2">
