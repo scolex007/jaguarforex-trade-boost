@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, User, LogOut } from "lucide-react";
@@ -68,8 +67,7 @@ const Navbar = () => {
               </button>
               <div className={`absolute right-0 mt-2 w-48 bg-jaguarblue-800 border border-jaguarblue-700 rounded-md shadow-lg transition-all duration-200 ${isResourcesMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'}`}>
                 <Link to="/resources/trading-guide" className="block px-4 py-2 hover:bg-jaguarblue-700">Trading Guide</Link>
-                <a href="#" className="block px-4 py-2 hover:bg-jaguarblue-700">Market Analysis</a>
-                <a href="#" className="block px-4 py-2 hover:bg-jaguarblue-700">Video Tutorials</a>
+                <Link to="/resources/market-analysis" className="block px-4 py-2 hover:bg-jaguarblue-700">Market Analysis</Link>
               </div>
             </div>
           </div>
@@ -164,12 +162,9 @@ const Navbar = () => {
                   <Link to="/resources/trading-guide" className="block py-2 hover:bg-jaguarblue-700">
                     Trading Guide
                   </Link>
-                  <a href="#" className="block py-2 hover:bg-jaguarblue-700">
+                  <Link to="/resources/market-analysis" className="block py-2 hover:bg-jaguarblue-700">
                     Market Analysis
-                  </a>
-                  <a href="#" className="block py-2 hover:bg-jaguarblue-700">
-                    Video Tutorials
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
