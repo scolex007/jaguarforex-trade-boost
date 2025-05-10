@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import api from '../services/api';
@@ -165,7 +164,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     try {
       const token = localStorage.getItem('auth_token');
       if (token) {
-        api.post('/auth/logout', { token }); // Blacklist the token on server
+        axios.post('https://my.jaguarforex.com/api/auth/logout', { token }); // Blacklist the token on server
       }
     } catch (err) {
       console.error('Error during logout:', err);
