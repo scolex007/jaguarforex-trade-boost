@@ -8,6 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isResourcesMenuOpen, setIsResourcesMenuOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   
@@ -20,6 +21,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = () => {
       setIsUserMenuOpen(false);
+      setIsResourcesMenuOpen(false);
     };
     
     window.addEventListener('click', handleClickOutside);
@@ -29,6 +31,11 @@ const Navbar = () => {
   const toggleUserMenu = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsUserMenuOpen(!isUserMenuOpen);
+  };
+  
+  const toggleResourcesMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsResourcesMenuOpen(!isResourcesMenuOpen);
   };
 
   return (
@@ -51,13 +58,16 @@ const Navbar = () => {
             <a href="/#cashback" className="nav-item">Cashback</a>
             <a href="/#faq" className="nav-item">FAQ</a>
             
-            <div className="relative group ml-2">
-              <button className="nav-item flex items-center">
+            <div className="relative group">
+              <button 
+                className="nav-item flex items-center"
+                onClick={toggleResourcesMenu}
+              >
                 Resources
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
-              <div className="absolute right-0 mt-2 w-48 bg-jaguarblue-800 border border-jaguarblue-700 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                <a href="#" className="block px-4 py-2 hover:bg-jaguarblue-700">Trading Guides</a>
+              <div className={`absolute right-0 mt-2 w-48 bg-jaguarblue-800 border border-jaguarblue-700 rounded-md shadow-lg transition-all duration-200 ${isResourcesMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'}`}>
+                <Link to="/resources/trading-guide" className="block px-4 py-2 hover:bg-jaguarblue-700">Trading Guide</Link>
                 <a href="#" className="block px-4 py-2 hover:bg-jaguarblue-700">Market Analysis</a>
                 <a href="#" className="block px-4 py-2 hover:bg-jaguarblue-700">Video Tutorials</a>
               </div>
@@ -136,7 +146,33 @@ const Navbar = () => {
             <a href="/#tools" className="block py-2 px-4 hover:bg-jaguarblue-700">Trading Tools</a>
             <a href="/#cashback" className="block py-2 px-4 hover:bg-jaguarblue-700">Cashback</a>
             <a href="/#faq" className="block py-2 px-4 hover:bg-jaguarblue-700">FAQ</a>
-            <a href="#" className="block py-2 px-4 hover:bg-jaguarblue-700">Resources</a>
+            
+            <div className="py-2 px-4">
+              <button 
+                className="flex items-center justify-between w-full hover:bg-jaguarblue-700 py-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsResourcesMenuOpen(!isResourcesMenuOpen);
+                }}
+              >
+                <span>Resources</span>
+                <ChevronDown className={`h-4 w-4 transform transition-transform ${isResourcesMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isResourcesMenuOpen && (
+                <div className="pl-4 mt-1 border-l border-jaguarblue-600">
+                  <Link to="/resources/trading-guide" className="block py-2 hover:bg-jaguarblue-700">
+                    Trading Guide
+                  </Link>
+                  <a href="#" className="block py-2 hover:bg-jaguarblue-700">
+                    Market Analysis
+                  </a>
+                  <a href="#" className="block py-2 hover:bg-jaguarblue-700">
+                    Video Tutorials
+                  </a>
+                </div>
+              )}
+            </div>
             
             <div className="mt-4 flex flex-col space-y-2 px-4">
               {isAuthenticated ? (
