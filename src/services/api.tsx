@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -85,7 +86,7 @@ api.interceptors.response.use(
 );
 
 // Helper to check if an endpoint is currently rate-limited
-api.isRateLimited = (endpoint) => {
+const isRateLimited = (endpoint: string): boolean => {
   const limitTime = failedRequests.get(endpoint);
   if (!limitTime) return false;
   
@@ -100,4 +101,10 @@ api.isRateLimited = (endpoint) => {
   return stillLimited;
 };
 
-export default api;
+// Attach the isRateLimited function to the api object
+const apiWithHelpers = {
+  ...api,
+  isRateLimited
+};
+
+export default apiWithHelpers;
