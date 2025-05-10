@@ -16,11 +16,33 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [honeypot, setHoneypot] = useState(''); // Honeypot field
+  const [lastAttempt, setLastAttempt] = useState<number>(0); // To track time between attempts
   const { login, error, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Honeypot check - if filled, silently fail
+    if (honeypot) {
+      console.log("Honeypot triggered");
+      // Simulate success but don't actually log in
+      toast.success('Checking credentials...');
+      setTimeout(() => {
+        toast.error('Authentication failed');
+      }, 2000);
+      return;
+    }
+
+    // Simple client-side rate limiting (as a supplement to backend rate limiting)
+    const now = Date.now();
+    if (now - lastAttempt < 2000) { // 2 seconds between attempts
+      toast.error('Please wait before trying again');
+      return;
+    }
+    setLastAttempt(now);
+
     try {
       await login(email, password);
       toast.success('Login successful!');
@@ -51,6 +73,18 @@ const Login = () => {
               )}
 
               <div className="space-y-4">
+                {/* Honeypot field - hidden from real users */}
+                <div className="absolute opacity-0 pointer-events-none">
+                  <Input
+                    id="user_url"
+                    name="user_url"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-200">Email</Label>
                   <Input
@@ -61,6 +95,7 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="bg-jaguarblue-800 border-jaguarblue-600"
+                    autoComplete="email"
                   />
                 </div>
 
@@ -75,6 +110,7 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       className="bg-jaguarblue-800 border-jaguarblue-600"
+                      autoComplete="current-password"
                     />
                     <button
                       type="button"
