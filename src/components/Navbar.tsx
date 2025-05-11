@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, User, LogOut } from "lucide-react";
@@ -72,39 +73,30 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Login/Register Buttons or User Menu */}
+          {/* Login/Register Buttons or Member/Logout */}
           <div className="hidden md:flex items-center space-x-2">
             {isAuthenticated ? (
-              <div className="relative">
+              <>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 flex items-center gap-2"
-                  onClick={toggleUserMenu}
+                  className="border-jaguargold text-jaguargold hover:text-jaguarblue-900"
+                  asChild
                 >
-                  <User size={16} />
-                  {user?.name || 'Account'}
-                  <ChevronDown size={14} />
+                  <Link to="/dashboard">
+                    <User size={16} className="mr-2" />
+                    Member Area
+                  </Link>
                 </Button>
-                
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-jaguarblue-800 border border-jaguarblue-700 rounded-md shadow-lg z-50">
-                    <Link to="/dashboard" className="block px-4 py-2 hover:bg-jaguarblue-700">
-                      Dashboard
-                    </Link>
-                    <Link to="/profile" className="block px-4 py-2 hover:bg-jaguarblue-700">
-                      Profile Settings
-                    </Link>
-                    <button 
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 hover:bg-jaguarblue-700 flex items-center"
-                    >
-                      <LogOut size={14} className="mr-2" /> 
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+                <Button
+                  size="sm"
+                  onClick={handleLogout}
+                  className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+                >
+                  <LogOut size={16} className="mr-2" />
+                  Logout
+                </Button>
+              </>
             ) : (
               <>
                 <Button 
@@ -172,16 +164,23 @@ const Navbar = () => {
             <div className="mt-4 flex flex-col space-y-2 px-4">
               {isAuthenticated ? (
                 <>
-                  <Link to="/dashboard" className="block py-2 hover:bg-jaguarblue-700">
-                    Dashboard
-                  </Link>
-                  <button 
-                    onClick={handleLogout}
-                    className="block py-2 hover:bg-jaguarblue-700 flex items-center"
+                  <Button 
+                    variant="outline"
+                    className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full flex justify-center items-center"
+                    asChild
                   >
-                    <LogOut size={14} className="mr-2" /> 
+                    <Link to="/dashboard">
+                      <User size={16} className="mr-2" />
+                      Member Area
+                    </Link>
+                  </Button>
+                  <Button 
+                    onClick={handleLogout}
+                    className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full flex justify-center items-center"
+                  >
+                    <LogOut size={16} className="mr-2" />
                     Logout
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>

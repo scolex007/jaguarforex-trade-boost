@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import api from '../services/api';
+import { toast } from 'sonner';
 
 interface User {
   id: string;
@@ -112,6 +113,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
 
   const login = async (username: string, password: string) => {
     setLoading(true);
+    setError(null); // Clear previous errors
     try {
       // Added timestamp to help prevent replay attacks
       const timestamp = new Date().toISOString();
@@ -131,7 +133,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
       }
       
       setUser(user);
-      setError(null);
+      toast.success('Login successful!');
       
       // Set up refresh token interval
       if (refreshTokenInterval) {
@@ -140,6 +142,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
       const interval = setInterval(refreshAccessToken, TOKEN_REFRESH_INTERVAL);
       setRefreshTokenInterval(interval);
     } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Login failed');
       setError(err.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
@@ -151,8 +154,10 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     try {
       const response = await axios.post('https://my.jaguarforex.com/api/auth/register/jaguarforex', userData);
       setError(null);
+      toast.success('Registration successful! You can now log in.');
       return response.data;
     } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Registration failed');
       setError(err.response?.data?.message || 'Registration failed');
       throw err;
     } finally {
@@ -175,6 +180,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('refresh_token');
     setUser(null);
+    toast.success('You have been logged out successfully');
     
     // Clear refresh interval
     if (refreshTokenInterval) {

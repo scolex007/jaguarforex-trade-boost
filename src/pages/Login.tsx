@@ -28,10 +28,7 @@ const Login = () => {
     if (honeypot) {
       console.log("Honeypot triggered");
       // Simulate success but don't actually log in
-      toast.success('Checking credentials...');
-      setTimeout(() => {
-        toast.error('Authentication failed');
-      }, 2000);
+      toast.error('Authentication failed');
       return;
     }
 
@@ -45,10 +42,10 @@ const Login = () => {
 
     try {
       await login(username, password);
-      toast.success('Login successful!');
+      // Success notification is handled in the login function only on successful response
       navigate('/dashboard');
     } catch (err) {
-      // Error is handled in auth context
+      // Error is handled in auth context, no need to show toast here
     }
   };
 
