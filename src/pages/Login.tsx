@@ -13,7 +13,7 @@ import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [honeypot, setHoneypot] = useState(''); // Honeypot field
@@ -44,7 +44,7 @@ const Login = () => {
     setLastAttempt(now);
 
     try {
-      await login(email, password);
+      await login(username, password);
       toast.success('Login successful!');
       navigate('/dashboard');
     } catch (err) {
@@ -86,16 +86,16 @@ const Login = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-200">Email</Label>
+                  <Label htmlFor="username" className="text-gray-200">Username</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                     className="bg-jaguarblue-800 border-jaguarblue-600"
-                    autoComplete="email"
+                    autoComplete="username"
                   />
                 </div>
 

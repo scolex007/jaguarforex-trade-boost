@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import axios from 'axios';
 import api from '../services/api';
@@ -14,7 +15,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   register: (userData: any) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -109,14 +110,14 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setLoading(true);
     try {
       // Added timestamp to help prevent replay attacks
       const timestamp = new Date().toISOString();
       
       const response = await axios.post('https://my.jaguarforex.com/api/auth/login', {
-        email, 
+        username, 
         password,
         timestamp // Backend can verify request freshness
       });
