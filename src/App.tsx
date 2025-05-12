@@ -9,6 +9,7 @@ import Tools from "./pages/Tools";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import PhpBackend from "./pages/PhpBackend";
 import NotFound from "./pages/NotFound";
 import TradingGuide from "./pages/TradingGuide";
 import MarketAnalysis from "./pages/MarketAnalysis";
@@ -34,6 +35,11 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/backend" element={
+              <ProtectedRoute>
+                <PhpBackend />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

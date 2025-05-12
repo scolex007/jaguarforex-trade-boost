@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -45,7 +46,7 @@ const Dashboard = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
               <h3 className="text-lg font-semibold text-white mb-4">Account Summary</h3>
               <div className="space-y-2">
@@ -68,6 +69,22 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
+            <h3 className="text-lg font-semibold text-white mb-4">Access PHP Backend</h3>
+            <p className="text-gray-300 mb-4">
+              Access our legacy system for additional features and functionality.
+            </p>
+            <Button 
+              asChild
+              className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+            >
+              <Link to="/backend">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Access PHP Backend
+              </Link>
+            </Button>
           </div>
         </div>
       </main>
