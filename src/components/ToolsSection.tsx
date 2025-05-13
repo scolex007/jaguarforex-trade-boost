@@ -8,22 +8,26 @@ const ToolsSection = () => {
     {
       name: "JaguarTrend Pro EA",
       description: "Automated trend-following expert advisor with smart entry and exit algorithms.",
-      icon: <TrendingUp className="h-6 w-6" />
+      icon: <TrendingUp className="h-6 w-6" />,
+      platform: "MT4"
     },
     {
       name: "MultiTimeframe Analyzer",
       description: "Analyze market conditions across multiple timeframes simultaneously.",
-      icon: <BarChart3 className="h-6 w-6" />
+      icon: <BarChart3 className="h-6 w-6" />,
+      platform: "MT5"
     },
     {
       name: "Advanced RSI Divergence",
       description: "Spot market divergences early with this enhanced RSI indicator.",
-      icon: <LineChart className="h-6 w-6" />
+      icon: <LineChart className="h-6 w-6" />,
+      platform: "MT4"
     },
     {
       name: "Risk Calculator",
       description: "Optimize your position sizing with our comprehensive risk management tool.",
-      icon: <Gauge className="h-6 w-6" />
+      icon: <Gauge className="h-6 w-6" />,
+      platform: "Both"
     }
   ];
 
@@ -45,8 +49,19 @@ const ToolsSection = () => {
                   <div className="mt-1 p-2 bg-jaguarblue-700 rounded-lg text-jaguargold">
                     {tool.icon}
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-white">{tool.name}</h3>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-semibold text-white">{tool.name}</h3>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        tool.platform === "MT4" 
+                          ? "bg-[#0EA5E9]/20 text-[#0EA5E9]" 
+                          : tool.platform === "MT5" 
+                            ? "bg-[#8B5CF6]/20 text-[#8B5CF6]" 
+                            : "bg-gray-500/20 text-gray-300"
+                      }`}>
+                        {tool.platform}
+                      </span>
+                    </div>
                     <p className="text-gray-300 text-sm">{tool.description}</p>
                   </div>
                 </div>
