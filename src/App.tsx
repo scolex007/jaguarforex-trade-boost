@@ -13,6 +13,7 @@ import PhpBackend from "./pages/PhpBackend";
 import NotFound from "./pages/NotFound";
 import TradingGuide from "./pages/TradingGuide";
 import MarketAnalysis from "./pages/MarketAnalysis";
+import ToolDetail from "./pages/ToolDetail";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -28,6 +29,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/tools" element={<Tools />} />
+            <Route path="/tools/:toolId" element={<ToolDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/resources/trading-guide" element={<TradingGuide />} />

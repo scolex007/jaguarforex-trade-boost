@@ -1,42 +1,38 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, TrendingUp, BarChart3, LineChart, Gauge, ArrowRight } from "lucide-react";
+import { Download, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getToolsData } from "@/data/toolsData";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ToolsSection = () => {
-  const tools = [
-    {
-      name: "JaguarTrend Pro EA",
-      description: "Automated trend-following expert advisor with smart entry and exit algorithms.",
-      icon: <TrendingUp className="h-6 w-6" />,
-      platform: "MT4"
-    },
-    {
-      name: "MultiTimeframe Analyzer",
-      description: "Analyze market conditions across multiple timeframes simultaneously.",
-      icon: <BarChart3 className="h-6 w-6" />,
-      platform: "MT5"
-    },
-    {
-      name: "Advanced RSI Divergence",
-      description: "Spot market divergences early with this enhanced RSI indicator.",
-      icon: <LineChart className="h-6 w-6" />,
-      platform: "MT4"
-    },
-    {
-      name: "Risk Calculator",
-      description: "Optimize your position sizing with our comprehensive risk management tool.",
-      icon: <Gauge className="h-6 w-6" />,
-      platform: "Both"
-    }
-  ];
-
+  const { isAuthenticated } = useAuth();
+  const allTools = getToolsData();
+  const featuredTools = allTools.slice(0, 4); // Just show the first 4 tools
+  
+  const [selectedEA, setSelectedEA] = useState("JaguarTrend Pro EA");
+  const [selectedPlatform, setSelectedPlatform] = useState("MetaTrader 4");
+  
   // Platform badge colors
   const platformBadgeColors = {
     "MT4": "bg-[#0EA5E9]/20 text-[#0EA5E9]",
     "MT5": "bg-[#8B5CF6]/20 text-[#8B5CF6]",
     "Both": "bg-gray-500/20 text-gray-300"
+  };
+
+  // Download handler function
+  const handleDownload = () => {
+    const tool = allTools.find(t => t.name === selectedEA);
+    if (!tool) return;
+    
+    const link = document.createElement('a');
+    link.href = tool.filePath;
+    link.download = tool.name.replace(/\s+/g, '_');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -52,7 +48,7 @@ const ToolsSection = () => {
             </p>
             
             <div className="space-y-4">
-              {tools.map((tool, index) => (
+              {featuredTools.map((tool, index) => (
                 <div key={index} className="flex items-start gap-4 p-4 rounded-lg bg-jaguarblue-800/50 border border-jaguarblue-700">
                   <div className="mt-1 p-2 bg-jaguarblue-700 rounded-lg text-jaguargold">
                     {tool.icon}
@@ -60,18 +56,18 @@ const ToolsSection = () => {
                   <div className="flex-1">
                     <div className="flex justify-between items-center">
                       <h3 className="font-semibold text-white">{tool.name}</h3>
-                      <Badge className={platformBadgeColors[tool.platform as keyof typeof platformBadgeColors]}>
+                      <Badge className={platformBadgeColors[tool.platform]}>
                         {tool.platform}
                       </Badge>
                     </div>
-                    <p className="text-gray-300 text-sm">{tool.description}</p>
+                    <p className="text-gray-300 text-sm">{tool.shortDescription}</p>
                   </div>
                 </div>
               ))}
             </div>
             
             <div className="mt-8">
-              <Button className="btn-primary flex items-center gap-2" asChild>
+              <Button className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center gap-2" asChild>
                 <Link to="/tools">
                   Browse All Tools <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -85,24 +81,44 @@ const ToolsSection = () => {
               
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-2">Select EA Type</label>
-                <select className="w-full p-3 rounded-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white">
-                  <option>JaguarTrend Pro EA</option>
-                  <option>Scalper Pro EA</option>
-                  <option>Breakout Master EA</option>
-                  <option>Hedge Fund EA</option>
+                <select 
+                  className="w-full p-3 rounded-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white"
+                  value={selectedEA}
+                  onChange={(e) => setSelectedEA(e.target.value)}
+                >
+                  {allTools
+                    .filter(tool => tool.category === "Expert Advisors")
+                    .map((ea, index) => (
+                      <option key={index} value={ea.name}>{ea.name}</option>
+                    ))
+                  }
                 </select>
               </div>
               
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-2">Platform Version</label>
-                <select className="w-full p-3 rounded-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white">
+                <select 
+                  className="w-full p-3 rounded-lg bg-jaguarblue-700 border border-jaguarblue-600 text-white"
+                  value={selectedPlatform}
+                  onChange={(e) => setSelectedPlatform(e.target.value)}
+                >
                   <option>MetaTrader 4</option>
                   <option>MetaTrader 5</option>
                 </select>
               </div>
               
-              <Button className="w-full bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center justify-center gap-2">
-                Download Now <Download className="h-4 w-4" />
+              <Button 
+                className="w-full bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center justify-center gap-2"
+                onClick={handleDownload}
+                disabled={!isAuthenticated}
+              >
+                {isAuthenticated ? (
+                  <>Download Now <Download className="h-4 w-4" /></>
+                ) : (
+                  <Link to="/login" className="flex items-center gap-2 w-full justify-center">
+                    Login to Download <ArrowRight className="h-4 w-4" />
+                  </Link>
+                )}
               </Button>
               
               <p className="mt-4 text-center text-xs text-gray-400">

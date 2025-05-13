@@ -9,6 +9,8 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { truncateText } from "@/lib/utils";
+import { getToolsData } from "@/data/toolsData";
+import { Link } from "react-router-dom";
 
 const Tools = () => {
   const categories = ["All", "Expert Advisors", "Indicators", "Scripts", "Utilities"];
@@ -30,81 +32,11 @@ const Tools = () => {
     "bg-[#EC4899]/20 text-[#EC4899]", // Pink
     "bg-[#F43F5E]/20 text-[#F43F5E]", // Red
   ];
+
+  // New badge color for "New" tag
+  const newBadgeColor = "bg-[#0EA5E9]/20 text-[#0EA5E9]";
   
-  const tools = [
-    {
-      name: "JaguarTrend Pro EA",
-      description: "Automated trend-following expert advisor with smart entry and exit algorithms.",
-      category: "Expert Advisors",
-      platform: "MT4",
-      icon: <TrendingUp className="h-6 w-6" />,
-      popular: true,
-      filePath: "/downloads/JaguarTrendProEA.ex4"
-    },
-    {
-      name: "Scalper Pro EA",
-      description: "High-frequency trading expert advisor designed for quick profits in ranging markets.",
-      category: "Expert Advisors",
-      platform: "MT5",
-      icon: <ChartCandlestick className="h-6 w-6" />,
-      popular: false,
-      filePath: "/downloads/ScalperProEA.ex5"
-    },
-    {
-      name: "Breakout Master EA",
-      description: "Automated system that identifies and trades significant price breakouts.",
-      category: "Expert Advisors",
-      platform: "MT4",
-      icon: <FileChartLine className="h-6 w-6" />,
-      popular: true,
-      filePath: "/downloads/BreakoutMasterEA.ex4"
-    },
-    {
-      name: "MultiTimeframe Analyzer",
-      description: "Analyze market conditions across multiple timeframes simultaneously.",
-      category: "Indicators",
-      platform: "MT5",
-      icon: <BarChart3 className="h-6 w-6" />,
-      popular: true,
-      filePath: "/downloads/MultiTimeframeAnalyzer.ex5"
-    },
-    {
-      name: "Advanced RSI Divergence",
-      description: "Spot market divergences early with this enhanced RSI indicator.",
-      category: "Indicators",
-      platform: "MT4",
-      icon: <LineChart className="h-6 w-6" />,
-      popular: false,
-      filePath: "/downloads/AdvancedRSIDivergence.ex4"
-    },
-    {
-      name: "Risk Calculator",
-      description: "Optimize your position sizing with our comprehensive risk management tool.",
-      category: "Utilities",
-      platform: "Both",
-      icon: <Calculator className="h-6 w-6" />,
-      popular: true,
-      filePath: "/downloads/RiskCalculator.mq4"
-    },
-    {
-      name: "Support/Resistance Detector",
-      description: "Automatically identify key support and resistance levels across timeframes.",
-      category: "Indicators",
-      platform: "MT5",
-      icon: <FileChartColumn className="h-6 w-6" />,
-      popular: false,
-      filePath: "/downloads/SupportResistanceDetector.ex5"
-    },
-    {
-      name: "Volatility Scanner",
-      description: "Find the most volatile currency pairs for optimal trading opportunities.",
-      category: "Scripts",
-      platform: "Both",
-      icon: <Gauge className="h-6 w-6" />,
-      popular: false,
-      filePath: "/downloads/VolatilityScanner.mq4"
-    },
-  ];
+  const tools = getToolsData();
   
   const filteredTools = tools.filter(tool => {
     // Filter by category
@@ -216,7 +148,12 @@ const Tools = () => {
                             Popular
                           </Badge>
                         )}
-                        <Badge className={platformBadgeColors[tool.platform as keyof typeof platformBadgeColors]}>
+                        {tool.isNew && (
+                          <Badge className={newBadgeColor}>
+                            New
+                          </Badge>
+                        )}
+                        <Badge className={platformBadgeColors[tool.platform]}>
                           {tool.platform}
                         </Badge>
                       </div>
@@ -233,8 +170,13 @@ const Tools = () => {
                     </div>
                   </CardContent>
                   <CardFooter className="mt-auto flex justify-between items-center gap-2">
-                    <Button className="flex-1 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center justify-center gap-2">
-                      View Tool <ArrowRight className="h-4 w-4" />
+                    <Button 
+                      className="flex-1 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center justify-center gap-2"
+                      asChild
+                    >
+                      <Link to={`/tools/${tool.id}`}>
+                        View Tool <ArrowRight className="h-4 w-4" />
+                      </Link>
                     </Button>
                     
                     {isAuthenticated && (
