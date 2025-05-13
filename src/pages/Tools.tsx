@@ -3,14 +3,33 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, TrendingUp, BarChart3, LineChart, Gauge, Filter, Calculator, ChartCandlestick, FileChartLine, FileChartColumn } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Download, TrendingUp, BarChart3, LineChart, Gauge, Filter, Calculator, ChartCandlestick, FileChartLine, FileChartColumn, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { truncateText } from "@/lib/utils";
 
 const Tools = () => {
   const categories = ["All", "Expert Advisors", "Indicators", "Scripts", "Utilities"];
   const [activeCategory, setActiveCategory] = useState("All");
   const [activePlatform, setActivePlatform] = useState("All");
+  const { isAuthenticated } = useAuth();
+  
+  // Badge color variants for platform badges
+  const platformBadgeColors = {
+    "MT4": "bg-[#0EA5E9]/20 text-[#0EA5E9]",
+    "MT5": "bg-[#8B5CF6]/20 text-[#8B5CF6]",
+    "Both": "bg-gray-500/20 text-gray-300"
+  };
+  
+  // Different badge colors for Popular badge
+  const popularBadgeColors = [
+    "bg-[#F97316]/20 text-[#F97316]", // Orange
+    "bg-[#10B981]/20 text-[#10B981]", // Green
+    "bg-[#EC4899]/20 text-[#EC4899]", // Pink
+    "bg-[#F43F5E]/20 text-[#F43F5E]", // Red
+  ];
   
   const tools = [
     {
@@ -20,6 +39,7 @@ const Tools = () => {
       platform: "MT4",
       icon: <TrendingUp className="h-6 w-6" />,
       popular: true,
+      filePath: "/downloads/JaguarTrendProEA.ex4"
     },
     {
       name: "Scalper Pro EA",
@@ -28,6 +48,7 @@ const Tools = () => {
       platform: "MT5",
       icon: <ChartCandlestick className="h-6 w-6" />,
       popular: false,
+      filePath: "/downloads/ScalperProEA.ex5"
     },
     {
       name: "Breakout Master EA",
@@ -36,6 +57,7 @@ const Tools = () => {
       platform: "MT4",
       icon: <FileChartLine className="h-6 w-6" />,
       popular: true,
+      filePath: "/downloads/BreakoutMasterEA.ex4"
     },
     {
       name: "MultiTimeframe Analyzer",
@@ -44,6 +66,7 @@ const Tools = () => {
       platform: "MT5",
       icon: <BarChart3 className="h-6 w-6" />,
       popular: true,
+      filePath: "/downloads/MultiTimeframeAnalyzer.ex5"
     },
     {
       name: "Advanced RSI Divergence",
@@ -52,6 +75,7 @@ const Tools = () => {
       platform: "MT4",
       icon: <LineChart className="h-6 w-6" />,
       popular: false,
+      filePath: "/downloads/AdvancedRSIDivergence.ex4"
     },
     {
       name: "Risk Calculator",
@@ -60,6 +84,7 @@ const Tools = () => {
       platform: "Both",
       icon: <Calculator className="h-6 w-6" />,
       popular: true,
+      filePath: "/downloads/RiskCalculator.mq4"
     },
     {
       name: "Support/Resistance Detector",
@@ -68,6 +93,7 @@ const Tools = () => {
       platform: "MT5",
       icon: <FileChartColumn className="h-6 w-6" />,
       popular: false,
+      filePath: "/downloads/SupportResistanceDetector.ex5"
     },
     {
       name: "Volatility Scanner",
@@ -76,6 +102,7 @@ const Tools = () => {
       platform: "Both",
       icon: <Gauge className="h-6 w-6" />,
       popular: false,
+      filePath: "/downloads/VolatilityScanner.mq4"
     },
   ];
   
@@ -91,6 +118,23 @@ const Tools = () => {
     
     return categoryMatch && platformMatch;
   });
+
+  // Helper function to get a random color from the array
+  const getRandomColor = (colors: string[]) => {
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+  
+  // Download handler function
+  const handleDownload = (filePath: string, toolName: string) => {
+    // In a real implementation, you would validate the file exists
+    // Create a link element to trigger download
+    const link = document.createElement('a');
+    link.href = filePath;
+    link.download = toolName.replace(/\s+/g, '_');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="min-h-screen bg-jaguarblue-800">
@@ -157,10 +201,10 @@ const Tools = () => {
               ))}
             </div>
             
-            {/* Tools Grid */}
+            {/* Tools Grid - Responsive: 1 column on mobile, 2-3 columns on larger screens */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTools.map((tool, index) => (
-                <Card key={index} className="bg-jaguarblue-700 border border-jaguarblue-600 hover:border-jaguargold/50 transition-all">
+                <Card key={index} className="bg-jaguarblue-700 border border-jaguarblue-600 hover:border-jaguargold/50 transition-all flex flex-col">
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="p-3 bg-jaguarblue-800 rounded-lg text-jaguargold">
@@ -168,23 +212,19 @@ const Tools = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         {tool.popular && (
-                          <span className="bg-jaguargold/20 text-jaguargold text-xs px-2 py-1 rounded-full">
+                          <Badge className={getRandomColor(popularBadgeColors)}>
                             Popular
-                          </span>
+                          </Badge>
                         )}
-                        <span className={`text-xs px-2 py-1 rounded-full ${
-                          tool.platform === "MT4" 
-                            ? "bg-[#0EA5E9]/20 text-[#0EA5E9]" 
-                            : tool.platform === "MT5" 
-                              ? "bg-[#8B5CF6]/20 text-[#8B5CF6]" 
-                              : "bg-gray-500/20 text-gray-300"
-                        }`}>
+                        <Badge className={platformBadgeColors[tool.platform as keyof typeof platformBadgeColors]}>
                           {tool.platform}
-                        </span>
+                        </Badge>
                       </div>
                     </div>
                     <CardTitle className="mt-3 text-white">{tool.name}</CardTitle>
-                    <CardDescription className="text-gray-300">{tool.description}</CardDescription>
+                    <CardDescription className="text-gray-300">
+                      {truncateText(tool.description, 80)}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center text-sm text-gray-400 mb-4">
@@ -192,10 +232,22 @@ const Tools = () => {
                       <span>{tool.category}</span>
                     </div>
                   </CardContent>
-                  <CardFooter>
-                    <Button className="w-full bg-jaguarblue-600 hover:bg-jaguarblue-500 text-white flex items-center justify-center gap-2">
-                      Download Now <Download className="h-4 w-4" />
+                  <CardFooter className="mt-auto flex justify-between items-center gap-2">
+                    <Button className="flex-1 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center justify-center gap-2">
+                      View Tool <ArrowRight className="h-4 w-4" />
                     </Button>
+                    
+                    {isAuthenticated && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="bg-jaguarblue-600 hover:bg-jaguarblue-500 text-white"
+                        onClick={() => handleDownload(tool.filePath, tool.name)}
+                        title="Quick download"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    )}
                   </CardFooter>
                 </Card>
               ))}

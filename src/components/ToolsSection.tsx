@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
-import { Download, TrendingUp, BarChart3, LineChart, Gauge, Download as DownloadIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Download, TrendingUp, BarChart3, LineChart, Gauge, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ToolsSection = () => {
@@ -31,6 +32,13 @@ const ToolsSection = () => {
     }
   ];
 
+  // Platform badge colors
+  const platformBadgeColors = {
+    "MT4": "bg-[#0EA5E9]/20 text-[#0EA5E9]",
+    "MT5": "bg-[#8B5CF6]/20 text-[#8B5CF6]",
+    "Both": "bg-gray-500/20 text-gray-300"
+  };
+
   return (
     <section id="tools" className="py-16 md:py-24">
       <div className="container mx-auto px-4">
@@ -52,15 +60,9 @@ const ToolsSection = () => {
                   <div className="flex-1">
                     <div className="flex justify-between items-center">
                       <h3 className="font-semibold text-white">{tool.name}</h3>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        tool.platform === "MT4" 
-                          ? "bg-[#0EA5E9]/20 text-[#0EA5E9]" 
-                          : tool.platform === "MT5" 
-                            ? "bg-[#8B5CF6]/20 text-[#8B5CF6]" 
-                            : "bg-gray-500/20 text-gray-300"
-                      }`}>
+                      <Badge className={platformBadgeColors[tool.platform as keyof typeof platformBadgeColors]}>
                         {tool.platform}
-                      </span>
+                      </Badge>
                     </div>
                     <p className="text-gray-300 text-sm">{tool.description}</p>
                   </div>
@@ -71,7 +73,7 @@ const ToolsSection = () => {
             <div className="mt-8">
               <Button className="btn-primary flex items-center gap-2" asChild>
                 <Link to="/tools">
-                  Browse All Tools <DownloadIcon className="h-4 w-4" />
+                  Browse All Tools <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>
