@@ -1,15 +1,7 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import axios from 'axios';
+import { authService, User } from '../services/authService';
 import { toast } from 'sonner';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  username?: string;
-  [key: string]: any;
-}
 
 interface AuthContextType {
   user: User | null;
@@ -30,55 +22,35 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in on page load
-    const verifyToken = async (token: string) => {
-      try {
-        const response = await axios.get('https://my.jaguarforex.com/api/auth/verify', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUser(response.data.user);
-        // Set axios default headers for all future requests
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      } catch (err) {
-        localStorage.removeItem('auth_token');
-        delete axios.defaults.headers.common['Authorization'];
-      } finally {
-        setLoading(false);
+    const checkAuth = async () => {
+      const token = authService.getToken();
+      if (token) {
+        const result = await authService.verifyToken();
+        if (result.success && result.user) {
+          setUser(result.user);
+        }
       }
-    };
-
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      verifyToken(token);
-    } else {
       setLoading(false);
-    }
+    };
+    
+    checkAuth();
   }, []);
 
   const login = async (usernameOrEmail: string, password: string) => {
     setLoading(true);
     setError(null); // Clear previous errors
     try {
-      // Detect if input is email or username based on @ character
-      const isEmail = usernameOrEmail.includes('@');
+      const result = await authService.login(usernameOrEmail, password);
       
-      const response = await axios.post('https://my.jaguarforex.com/api/auth/login', {
-        [isEmail ? 'email' : 'username']: usernameOrEmail,
-        password
-      });
-
-      const { token, user } = response.data;
-      localStorage.setItem('auth_token', token);
-      
-      // Set axios default headers for all future requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
-      setUser(user);
-      setError(null);
-      toast.success('Login successful!');
-      return response.data;
+      if (result.success && result.user) {
+        setUser(result.user);
+        setError(null);
+      } else {
+        setError(result.message || 'Login failed');
+        throw new Error(result.message);
+      }
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Login failed');
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.message || 'Login failed');
       throw err;
     } finally {
       setLoading(false);
@@ -88,13 +60,11 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const register = async (userData: any) => {
     setLoading(true);
     try {
-      const response = await axios.post('https://my.jaguarforex.com/api/auth/register', userData);
+      const result = await authService.register(userData);
       setError(null);
-      toast.success('Registration successful! You can now log in.');
-      return response.data;
+      return result;
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Registration failed');
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.message || 'Registration failed');
       throw err;
     } finally {
       setLoading(false);
@@ -102,10 +72,8 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
-    delete axios.defaults.headers.common['Authorization'];
+    authService.logout();
     setUser(null);
-    toast.success('You have been logged out successfully');
   };
 
   return (

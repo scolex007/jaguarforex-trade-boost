@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { toast } from 'sonner';
 
 const Login = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
@@ -27,15 +26,12 @@ const Login = () => {
     // Honeypot check - if filled, silently fail
     if (honeypot) {
       console.log("Honeypot triggered");
-      // Simulate success but don't actually log in
-      toast.error('Authentication failed');
       return;
     }
 
-    // Simple client-side rate limiting (as a supplement to backend rate limiting)
+    // Simple client-side rate limiting
     const now = Date.now();
     if (now - lastAttempt < 2000) { // 2 seconds between attempts
-      toast.error('Please wait before trying again');
       return;
     }
     setLastAttempt(now);
