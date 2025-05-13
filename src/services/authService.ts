@@ -1,4 +1,3 @@
-
 /**
  * Authentication service for the React frontend
  * This file integrates with the PHP backend at my.jaguarforex.com
@@ -162,28 +161,28 @@ const verifyToken = async (): Promise<AuthResponse> => {
   }
 };
 
-// Updated logout function to call the backend API
+// Updated logout function that doesn't use window.location
 const logout = async (): Promise<AuthResponse> => {
   const token = getToken();
   
-  // Call backend logout API to invalidate session
   try {
-    await axios.post(`${API_URL}/logout`, {}, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      withCredentials: true // Important for cookies
-    });
-    
-    toast.success('You have been logged out successfully');
+    if (token) {
+      // Call backend logout API to invalidate session
+      await axios.post(`${API_URL}/logout`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        withCredentials: true
+      });
+    }
   } catch (error) {
     console.error('Logout error:', error);
-    toast.error('Error during logout, but local session cleared');
+    // Continue with local logout even if API call fails
+  } finally {
+    // Always clear local storage
+    setToken(null);
+    setUser(null);
   }
-  
-  // Regardless of API response, clear local storage
-  setToken(null);
-  setUser(null);
   
   return { success: true };
 };

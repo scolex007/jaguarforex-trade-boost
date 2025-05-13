@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,9 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    toast.success('You have been logged out successfully');
-    // Navigate is handled by the navbar component which will detect the auth state change
+  const handleLogout = async () => {
+    await logout();
+    // Navigation is handled in the AuthContext
   };
 
   return (

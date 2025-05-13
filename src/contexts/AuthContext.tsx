@@ -25,14 +25,22 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   useEffect(() => {
     // Check if user is logged in on page load
     const checkAuth = async () => {
-      const token = authService.getToken();
-      if (token) {
-        const result = await authService.verifyToken();
-        if (result.success && result.user) {
-          setUser(result.user);
+      try {
+        const token = authService.getToken();
+        if (token) {
+          const result = await authService.verifyToken();
+          if (result.success && result.user) {
+            setUser(result.user);
+          } else {
+            // Clear invalid token silently
+            await authService.logout();
+          }
         }
+      } catch (err) {
+        console.error("Auth verification error:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     
     checkAuth();
@@ -79,7 +87,8 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     try {
       await authService.logout();
       setUser(null);
-      navigate('/'); // Redirect to homepage
+      toast.success('You have been logged out successfully');
+      navigate('/'); // Navigate to home page after logout
     } catch (err) {
       console.error("Error during logout:", err);
       // Still clear user data even if API call fails
