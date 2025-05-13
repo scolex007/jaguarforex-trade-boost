@@ -2,6 +2,7 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { authService, User } from '../services/authService';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -9,7 +10,7 @@ interface AuthContextType {
   error: string | null;
   login: (usernameOrEmail: string, password: string) => Promise<void>;
   register: (userData: any) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -19,6 +20,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in on page load
@@ -62,7 +64,9 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     try {
       const result = await authService.register(userData);
       setError(null);
-      return result;
+      if (!result.success) {
+        throw new Error(result.message);
+      }
     } catch (err: any) {
       setError(err.message || 'Registration failed');
       throw err;
@@ -71,9 +75,17 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    authService.logout();
-    setUser(null);
+  const logout = async () => {
+    try {
+      await authService.logout();
+      setUser(null);
+      navigate('/'); // Redirect to homepage
+    } catch (err) {
+      console.error("Error during logout:", err);
+      // Still clear user data even if API call fails
+      setUser(null);
+      navigate('/');
+    }
   };
 
   return (

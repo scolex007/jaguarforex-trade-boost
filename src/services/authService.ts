@@ -162,14 +162,30 @@ const verifyToken = async (): Promise<AuthResponse> => {
   }
 };
 
-// Logout user
-const logout = () => {
+// Updated logout function to call the backend API
+const logout = async (): Promise<AuthResponse> => {
+  const token = getToken();
+  
+  // Call backend logout API to invalidate session
+  try {
+    await axios.post(`${API_URL}/logout`, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      withCredentials: true // Important for cookies
+    });
+    
+    toast.success('You have been logged out successfully');
+  } catch (error) {
+    console.error('Logout error:', error);
+    toast.error('Error during logout, but local session cleared');
+  }
+  
+  // Regardless of API response, clear local storage
   setToken(null);
   setUser(null);
-  toast.success('You have been logged out successfully');
   
-  // Note: We are not redirecting to WordPress logout as per user's request to not log out unless explicitly done
-  // The redirect is handled by the app's router
+  return { success: true };
 };
 
 // Check if user is authenticated
