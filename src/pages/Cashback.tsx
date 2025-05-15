@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -34,6 +33,7 @@ const Cashback = () => {
   };
   
   const handleGetCashback = (brokerId: string) => {
+    // Direct navigation with the broker ID as a query parameter
     navigate(`/cashback/register?broker=${brokerId}`);
   };
 

@@ -2,8 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { DollarSign, CheckCircle, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CashbackSection = () => {
+  const navigate = useNavigate();
   const [tradingVolume, setTradingVolume] = useState(100);
   const [selectedBroker, setSelectedBroker] = useState("exness");
   const [monthlyEstimate, setMonthlyEstimate] = useState(0);
@@ -31,6 +33,10 @@ const CashbackSection = () => {
 
   const handleBrokerChange = (e) => {
     setSelectedBroker(e.target.value);
+  };
+
+  const handleGetCashback = () => {
+    navigate(`/cashback/register?broker=${selectedBroker}`);
   };
 
   return (
@@ -82,7 +88,7 @@ const CashbackSection = () => {
               
               <Button 
                 className="w-full btn-primary"
-                onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}
+                onClick={handleGetCashback}
               >
                 Start Earning Cashback
               </Button>

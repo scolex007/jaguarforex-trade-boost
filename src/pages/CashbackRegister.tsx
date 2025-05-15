@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { getBrokerById } from "@/data/brokersData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "../contexts/AuthContext";
 import { z } from "zod";
 import BrokerHeader from "@/components/cashback/BrokerHeader";
@@ -22,13 +22,20 @@ const CashbackRegister = () => {
   const [registrationType, setRegistrationType] = useState<'new' | 'existing'>('new');
   
   useEffect(() => {
+    // Check if broker exists as soon as component mounts
     if (!broker) {
       toast({
         title: "Broker not found",
         description: "Please select a broker from the cashback page.",
         variant: "destructive"
       });
-      navigate('/cashback');
+      
+      // Add a slight delay before navigating to prevent immediate redirect
+      const timer = setTimeout(() => {
+        navigate('/cashback');
+      }, 500);
+      
+      return () => clearTimeout(timer);
     }
   }, [broker, navigate]);
 
@@ -57,6 +64,11 @@ const CashbackRegister = () => {
       description: "Your cashback registration has been submitted successfully."
     });
   };
+  
+  // Show loading state or return null if broker is not available
+  if (!broker) {
+    return null; // Render nothing, letting the useEffect handle the navigation
+  }
   
   return (
     <div className="min-h-screen bg-jaguarblue-800">
