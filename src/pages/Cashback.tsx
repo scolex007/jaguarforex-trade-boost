@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CashbackHero from "@/components/cashback/CashbackHero";
@@ -32,7 +32,7 @@ const Cashback = () => {
   };
 
   // Add scroll listener
-  useState(() => {
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);

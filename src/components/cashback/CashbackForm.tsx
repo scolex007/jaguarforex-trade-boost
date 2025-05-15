@@ -107,7 +107,10 @@ const CashbackForm = () => {
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <CountrySelect onValueChange={field.onChange} defaultValue={field.value} />
+                    <CountrySelect 
+                      value={field.value}
+                      onChange={(value, dialCode) => field.onChange(value)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
