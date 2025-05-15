@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { getBrokerById } from "@/data/brokersData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../contexts/AuthContext";
 import BrokerHeader from "@/components/cashback/BrokerHeader";
 import RegistrationTypeSelector from "@/components/cashback/RegistrationTypeSelector";
