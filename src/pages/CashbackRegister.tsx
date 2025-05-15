@@ -12,6 +12,8 @@ import NewAccountForm from "@/components/cashback/NewAccountForm";
 import ExistingAccountForm from "@/components/cashback/ExistingAccountForm";
 
 const CashbackRegister = () => {
+  console.log("CashbackRegister - Component mounting"); // Add initial debug log
+  
   const [searchParams] = useSearchParams();
   const brokerId = searchParams.get('broker');
   const navigate = useNavigate();
@@ -20,13 +22,16 @@ const CashbackRegister = () => {
   const [registrationType, setRegistrationType] = useState<'new' | 'existing'>('new');
   const [isRedirecting, setIsRedirecting] = useState(false);
   
-  // Get the broker only once when the component mounts
+  // Get the broker information
+  console.log("CashbackRegister - Raw broker ID from URL:", brokerId);
   const broker = brokerId ? getBrokerById(brokerId) : null;
-  
-  console.log("CashbackRegister - Broker ID from URL:", brokerId);
-  console.log("CashbackRegister - Broker found:", broker);
+  console.log("CashbackRegister - Broker object after lookup:", broker);
   
   useEffect(() => {
+    // Debug information
+    document.title = broker ? `${broker.name} Cashback Registration` : "Cashback Registration";
+    console.log("CashbackRegister - Component mounted with broker ID:", brokerId);
+    
     // Check if broker exists as soon as component mounts
     if (!brokerId || !broker) {
       console.log("CashbackRegister - No broker found, redirecting to /cashback");
@@ -42,11 +47,13 @@ const CashbackRegister = () => {
         
         // Navigate back to cashback page after a short delay
         const timer = setTimeout(() => {
-          navigate('/cashback', { replace: true });
+          window.location.href = '/cashback'; // Use direct browser navigation
         }, 1000);
         
         return () => clearTimeout(timer);
       }
+    } else {
+      console.log("CashbackRegister - Valid broker found:", broker.name);
     }
   }, []); // Empty dependency array to run only once
 

@@ -36,12 +36,17 @@ const CashbackSection = () => {
   };
 
   const handleGetCashback = () => {
-    console.log("CashbackSection - Navigating with broker ID:", selectedBroker);
+    // Debug log
+    console.log("CashbackSection.tsx - handleGetCashback called with broker ID:", selectedBroker);
     
-    // Make sure we have a valid broker ID
+    // Make sure we have a valid broker ID before navigating
     if (selectedBroker) {
-      // Navigate directly to the registration page with the broker ID
-      navigate(`/cashback/register?broker=${selectedBroker}`);
+      // Try using window.location for a hard redirect as a test
+      console.log("CashbackSection.tsx - Redirecting to:", `/cashback/register?broker=${selectedBroker}`);
+      window.location.href = `/cashback/register?broker=${selectedBroker}`;
+      
+      // The navigate function below might not be reached due to the hard redirect above
+      // navigate(`/cashback/register?broker=${selectedBroker}`, { replace: false });
     }
   };
 
