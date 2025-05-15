@@ -4,9 +4,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { getBrokerById } from "@/data/brokersData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useAuth } from "../contexts/AuthContext";
-import { z } from "zod";
 import BrokerHeader from "@/components/cashback/BrokerHeader";
 import RegistrationTypeSelector from "@/components/cashback/RegistrationTypeSelector";
 import NewAccountForm from "@/components/cashback/NewAccountForm";
@@ -15,41 +14,41 @@ import ExistingAccountForm from "@/components/cashback/ExistingAccountForm";
 const CashbackRegister = () => {
   const [searchParams] = useSearchParams();
   const brokerId = searchParams.get('broker');
-  const broker = brokerId ? getBrokerById(brokerId) : null;
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   
   const [registrationType, setRegistrationType] = useState<'new' | 'existing'>('new');
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  
+  // Get the broker only once when the component mounts
+  const broker = brokerId ? getBrokerById(brokerId) : null;
+  
+  console.log("CashbackRegister - Broker ID from URL:", brokerId);
+  console.log("CashbackRegister - Broker found:", broker);
   
   useEffect(() => {
     // Check if broker exists as soon as component mounts
     if (!brokerId || !broker) {
-      // Prevent multiple redirects/toasts
-      if (!isRedirecting) {
-        setIsRedirecting(true);
-        
-        toast({
-          title: "Broker not found",
-          description: "Please select a broker from the cashback page.",
-          variant: "destructive"
-        });
-        
-        // Navigate back to cashback page after a short delay
-        setTimeout(() => {
-          navigate('/cashback', { replace: true });
-        }, 1000);
-      }
+      console.log("CashbackRegister - No broker found, redirecting to /cashback");
+      
+      // Show error toast using Sonner
+      toast.error("Broker not found", {
+        description: "Please select a broker from the cashback page."
+      });
+      
+      // Navigate back to cashback page after a short delay
+      const timer = setTimeout(() => {
+        navigate('/cashback', { replace: true });
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     }
-  }, [broker, brokerId, navigate, isRedirecting]);
+  }, []); // Empty dependency array to run only once
 
   const handleSubmit = (data: any) => {
     // Check if user is authenticated
     if (!isAuthenticated) {
-      toast({
-        title: "Authentication required",
-        description: "Please log in to submit your cashback registration",
-        variant: "destructive"
+      toast.error("Authentication required", {
+        description: "Please log in to submit your cashback registration"
       });
       navigate('/login');
       return;
@@ -63,8 +62,7 @@ const CashbackRegister = () => {
       ...data
     });
     
-    toast({
-      title: "Registration submitted",
+    toast.success("Registration submitted", {
       description: "Your cashback registration has been submitted successfully."
     });
   };

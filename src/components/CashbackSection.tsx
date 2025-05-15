@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { DollarSign, CheckCircle, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -35,10 +36,12 @@ const CashbackSection = () => {
   };
 
   const handleGetCashback = () => {
-    // Make sure we have a valid broker ID before navigating
+    console.log("CashbackSection - Navigating with broker ID:", selectedBroker);
+    
+    // Make sure we have a valid broker ID
     if (selectedBroker) {
-      // Use navigate with replace option to prevent back navigation issues
-      navigate(`/cashback/register?broker=${selectedBroker}`, { replace: false });
+      // Navigate directly to the registration page with the broker ID
+      navigate(`/cashback/register?broker=${selectedBroker}`);
     }
   };
 

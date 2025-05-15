@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -33,10 +34,12 @@ const Cashback = () => {
   };
   
   const handleGetCashback = (brokerId: string) => {
+    console.log("Navigating to registration with broker ID:", brokerId);
+    
     // Make sure we have a valid broker ID
     if (brokerId) {
-      // Use navigate with state to ensure the broker ID is passed properly
-      navigate(`/cashback/register?broker=${brokerId}`, { replace: false });
+      // Navigate directly to the registration page with the broker ID
+      navigate(`/cashback/register?broker=${brokerId}`);
     }
   };
 
