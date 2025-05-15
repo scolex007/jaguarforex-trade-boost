@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { getBrokerById } from "@/data/brokersData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { toast } from "sonner";
+import { toast } from "sonner"; // Use Sonner toast directly
 import { useAuth } from "../contexts/AuthContext";
 import BrokerHeader from "@/components/cashback/BrokerHeader";
 import RegistrationTypeSelector from "@/components/cashback/RegistrationTypeSelector";
@@ -18,6 +18,7 @@ const CashbackRegister = () => {
   const { isAuthenticated, user } = useAuth();
   
   const [registrationType, setRegistrationType] = useState<'new' | 'existing'>('new');
+  const [isRedirecting, setIsRedirecting] = useState(false);
   
   // Get the broker only once when the component mounts
   const broker = brokerId ? getBrokerById(brokerId) : null;
@@ -30,17 +31,22 @@ const CashbackRegister = () => {
     if (!brokerId || !broker) {
       console.log("CashbackRegister - No broker found, redirecting to /cashback");
       
-      // Show error toast using Sonner
-      toast.error("Broker not found", {
-        description: "Please select a broker from the cashback page."
-      });
-      
-      // Navigate back to cashback page after a short delay
-      const timer = setTimeout(() => {
-        navigate('/cashback', { replace: true });
-      }, 1000);
-      
-      return () => clearTimeout(timer);
+      // Prevent multiple redirects
+      if (!isRedirecting) {
+        setIsRedirecting(true);
+        
+        // Show error toast using Sonner
+        toast.error("Broker not found", {
+          description: "Please select a broker from the cashback page."
+        });
+        
+        // Navigate back to cashback page after a short delay
+        const timer = setTimeout(() => {
+          navigate('/cashback', { replace: true });
+        }, 1000);
+        
+        return () => clearTimeout(timer);
+      }
     }
   }, []); // Empty dependency array to run only once
 
