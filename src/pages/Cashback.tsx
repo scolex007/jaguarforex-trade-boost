@@ -33,8 +33,11 @@ const Cashback = () => {
   };
   
   const handleGetCashback = (brokerId: string) => {
-    // Direct navigation with the broker ID as a query parameter
-    navigate(`/cashback/register?broker=${brokerId}`);
+    // Make sure we have a valid broker ID
+    if (brokerId) {
+      // Use navigate with state to ensure the broker ID is passed properly
+      navigate(`/cashback/register?broker=${brokerId}`, { replace: false });
+    }
   };
 
   // Search and sort logic

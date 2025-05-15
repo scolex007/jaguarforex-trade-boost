@@ -20,24 +20,28 @@ const CashbackRegister = () => {
   const { isAuthenticated, user } = useAuth();
   
   const [registrationType, setRegistrationType] = useState<'new' | 'existing'>('new');
+  const [isRedirecting, setIsRedirecting] = useState(false);
   
   useEffect(() => {
     // Check if broker exists as soon as component mounts
-    if (!broker) {
-      toast({
-        title: "Broker not found",
-        description: "Please select a broker from the cashback page.",
-        variant: "destructive"
-      });
-      
-      // Add a slight delay before navigating to prevent immediate redirect
-      const timer = setTimeout(() => {
-        navigate('/cashback');
-      }, 500);
-      
-      return () => clearTimeout(timer);
+    if (!brokerId || !broker) {
+      // Prevent multiple redirects/toasts
+      if (!isRedirecting) {
+        setIsRedirecting(true);
+        
+        toast({
+          title: "Broker not found",
+          description: "Please select a broker from the cashback page.",
+          variant: "destructive"
+        });
+        
+        // Navigate back to cashback page after a short delay
+        setTimeout(() => {
+          navigate('/cashback', { replace: true });
+        }, 1000);
+      }
     }
-  }, [broker, navigate]);
+  }, [broker, brokerId, navigate, isRedirecting]);
 
   const handleSubmit = (data: any) => {
     // Check if user is authenticated
@@ -67,7 +71,18 @@ const CashbackRegister = () => {
   
   // Show loading state or return null if broker is not available
   if (!broker) {
-    return null; // Render nothing, letting the useEffect handle the navigation
+    // Return a minimal loading state instead of null
+    return (
+      <div className="min-h-screen bg-jaguarblue-800">
+        <Navbar />
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="text-gray-300">Loading broker information...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
   
   return (
