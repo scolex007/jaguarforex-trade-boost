@@ -1,9 +1,11 @@
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, User, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import DesktopMenu from "./navbar/DesktopMenu";
+import MobileMenu from "./navbar/MobileMenu";
+import UserMenu from "./navbar/UserMenu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,71 +54,13 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-1">
-            <a href="/#features" className="nav-item">Features</a>
-            <Link to="/tools" className="nav-item">Trading Tools</Link>
-            <Link to="/cashback" className="nav-item">Cashback</Link>
-            <a href="/#faq" className="nav-item">FAQ</a>
-            
-            <div className="relative group">
-              <button 
-                className="nav-item flex items-center"
-                onClick={toggleResourcesMenu}
-              >
-                Resources
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
-              <div className={`absolute right-0 mt-2 w-48 bg-jaguarblue-800 border border-jaguarblue-700 rounded-md shadow-lg transition-all duration-200 ${isResourcesMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'}`}>
-                <Link to="/resources/trading-guide" className="block px-4 py-2 hover:bg-jaguarblue-700">Trading Guide</Link>
-                <Link to="/resources/market-analysis" className="block px-4 py-2 hover:bg-jaguarblue-700">Market Analysis</Link>
-              </div>
-            </div>
-          </div>
+          <DesktopMenu 
+            isResourcesMenuOpen={isResourcesMenuOpen}
+            toggleResourcesMenu={toggleResourcesMenu}
+          />
 
-          {/* Login/Register Buttons or Member/Logout */}
-          <div className="hidden md:flex items-center space-x-2">
-            {isAuthenticated ? (
-              <>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="border-jaguargold text-jaguargold hover:text-jaguarblue-900"
-                  asChild
-                >
-                  <Link to="/dashboard">
-                    <User size={16} className="mr-2" />
-                    Member Area
-                  </Link>
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleLogout}
-                  className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
-                >
-                  <LogOut size={16} className="mr-2" />
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="border-jaguargold text-jaguargold hover:text-jaguarblue-900"
-                  asChild
-                >
-                  <Link to="/login">Login</Link>
-                </Button>
-                <Button 
-                  size="sm" 
-                  className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
-                  asChild
-                >
-                  <Link to="/register">Register</Link>
-                </Button>
-              </>
-            )}
-          </div>
+          {/* User Menu (Login/Register or Member Area/Logout) */}
+          <UserMenu handleLogout={handleLogout} />
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
@@ -130,80 +74,12 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-2 py-2">
-            <a href="/#features" className="block py-2 px-4 hover:bg-jaguarblue-700">Features</a>
-            <Link to="/tools" className="block py-2 px-4 hover:bg-jaguarblue-700">Trading Tools</Link>
-            <Link to="/cashback" className="block py-2 px-4 hover:bg-jaguarblue-700">Cashback</Link>
-            <a href="/#faq" className="block py-2 px-4 hover:bg-jaguarblue-700">FAQ</a>
-            
-            <div className="py-2 px-4">
-              <button 
-                className="flex items-center justify-between w-full hover:bg-jaguarblue-700 py-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsResourcesMenuOpen(!isResourcesMenuOpen);
-                }}
-              >
-                <span>Resources</span>
-                <ChevronDown className={`h-4 w-4 transform transition-transform ${isResourcesMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {isResourcesMenuOpen && (
-                <div className="pl-4 mt-1 border-l border-jaguarblue-600">
-                  <Link to="/resources/trading-guide" className="block py-2 hover:bg-jaguarblue-700">
-                    Trading Guide
-                  </Link>
-                  <Link to="/resources/market-analysis" className="block py-2 hover:bg-jaguarblue-700">
-                    Market Analysis
-                  </Link>
-                </div>
-              )}
-            </div>
-            
-            <div className="mt-4 flex flex-col space-y-2 px-4">
-              {isAuthenticated ? (
-                <>
-                  <Button 
-                    variant="outline"
-                    className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full flex justify-center items-center"
-                    asChild
-                  >
-                    <Link to="/dashboard">
-                      <User size={16} className="mr-2" />
-                      Member Area
-                    </Link>
-                  </Button>
-                  <Button 
-                    onClick={handleLogout}
-                    className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full flex justify-center items-center"
-                  >
-                    <LogOut size={16} className="mr-2" />
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="border-jaguargold text-jaguargold hover:text-jaguarblue-900 w-full"
-                    asChild
-                  >
-                    <Link to="/login">Login</Link>
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 w-full"
-                    asChild
-                  >
-                    <Link to="/register">Register</Link>
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+        <MobileMenu 
+          isMenuOpen={isMenuOpen}
+          isResourcesMenuOpen={isResourcesMenuOpen}
+          setIsResourcesMenuOpen={setIsResourcesMenuOpen}
+          handleLogout={handleLogout}
+        />
       </div>
     </nav>
   );
