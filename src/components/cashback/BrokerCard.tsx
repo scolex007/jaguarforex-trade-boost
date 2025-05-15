@@ -19,17 +19,10 @@ const BrokerCard = ({ broker }: BrokerCardProps) => {
   };
   
   const handleGetCashback = (brokerId: string) => {
-    // Debug log
-    console.log("BrokerCard.tsx - handleGetCashback called with broker ID:", brokerId);
-    
     // Make sure we have a valid broker ID
     if (brokerId) {
-      // Try using window.location for a hard redirect as a test
-      console.log("BrokerCard.tsx - Redirecting to:", `/cashback/register?broker=${brokerId}`);
-      window.location.href = `/cashback/register?broker=${brokerId}`;
-      
-      // The navigate function below might not be reached due to the hard redirect above
-      // navigate(`/cashback/register?broker=${brokerId}`, { replace: false });
+      // Use React Router's navigate instead of window.location for client-side routing
+      navigate(`/cashback/register?broker=${brokerId}`);
     }
   };
 

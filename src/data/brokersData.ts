@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 
 export interface BrokerAccountType {
@@ -149,18 +148,12 @@ export const getBrokerById = (id: string): Broker | undefined => {
   // Convert to lowercase for case-insensitive comparison and trim any whitespace
   const normalizedId = id?.toLowerCase().trim();
   
-  // Additional logging for debugging
-  console.log("getBrokerById called with:", id);
-  console.log("Normalized ID:", normalizedId);
-  
   if (!normalizedId) {
-    console.log("No valid broker ID provided");
     return undefined;
   }
   
   // Try to find the broker with case-insensitive matching
   const broker = brokersData.find(broker => broker.id.toLowerCase() === normalizedId);
-  console.log("Broker found:", broker ? broker.name : "None");
   
   return broker;
 };

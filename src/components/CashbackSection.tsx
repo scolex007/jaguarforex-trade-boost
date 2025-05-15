@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { DollarSign, CheckCircle, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -36,17 +35,9 @@ const CashbackSection = () => {
   };
 
   const handleGetCashback = () => {
-    // Debug log
-    console.log("CashbackSection.tsx - handleGetCashback called with broker ID:", selectedBroker);
-    
-    // Make sure we have a valid broker ID before navigating
+    // Use React Router's navigate for client-side routing
     if (selectedBroker) {
-      // Try using window.location for a hard redirect as a test
-      console.log("CashbackSection.tsx - Redirecting to:", `/cashback/register?broker=${selectedBroker}`);
-      window.location.href = `/cashback/register?broker=${selectedBroker}`;
-      
-      // The navigate function below might not be reached due to the hard redirect above
-      // navigate(`/cashback/register?broker=${selectedBroker}`, { replace: false });
+      navigate(`/cashback/register?broker=${selectedBroker}`);
     }
   };
 
