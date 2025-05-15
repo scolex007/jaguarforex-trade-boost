@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -21,7 +20,6 @@ const Cashback = () => {
   };
   
   const handleGetCashback = (brokerId: string) => {
-    // This will be updated later to redirect to the registration page
     navigate(`/cashback/register?broker=${brokerId}`);
   };
 

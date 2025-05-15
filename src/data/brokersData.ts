@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 
 export interface BrokerAccountType {
@@ -14,6 +13,7 @@ export interface Broker {
   accountTypes: BrokerAccountType[];
   platforms: string[];
   paymentOptions: string[];
+  affiliateLink?: string; // Optional affiliate link
   featured?: boolean;
 }
 
@@ -83,7 +83,8 @@ export const brokersData: Broker[] = [
       }
     ],
     platforms: ["MT4", "MT5", "cTrader", "R Trader"],
-    paymentOptions: ["Direct to broker account (Daily)", "Monthly Cash Back"]
+    paymentOptions: ["Direct to broker account (Daily)", "Monthly Cash Back"],
+    affiliateLink: "https://my.roboforex.com/en/?a=ztwx"
   },
   {
     id: "thinkmarkets",
