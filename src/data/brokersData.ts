@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 
 export interface BrokerAccountType {
@@ -20,21 +19,21 @@ export interface Broker {
 
 export const brokersData: Broker[] = [
   {
-    id: "exness",
-    name: "Exness",
-    logo: "https://d33vw3iu5hs0zi.cloudfront.net/media/logo_big_new_f7ebab0194.svg",
-    rating: 4.7,
+    id: "orbex",
+    name: "Orbex",
+    logo: "/images/brokers/orbex-logo.png",
+    rating: 4.0,
     accountTypes: [
       {
-        name: "Standard",
+        name: "Fixed",
         description: "$4.00 Per Lot"
       },
       {
-        name: "Raw Spread",
+        name: "Starter",
         description: "$3.50 Per Lot"
       },
       {
-        name: "Zero",
+        name: "Premium",
         description: "$1.50 Per Lot"
       }
     ],
@@ -43,9 +42,31 @@ export const brokersData: Broker[] = [
     featured: true
   },
   {
+    id: "pepperstone",
+    name: "Pepperstone",
+    logo: "/images/brokers/pepperstone-logo.png",
+    rating: 4.9,
+    accountTypes: [
+      {
+        name: "Standard",
+        description: [
+          "FX Majors: 0.24 Pips", 
+          "FX Others: 0.30 Pips"
+        ]
+      },
+      {
+        name: "Razor",
+        description: "12.85% Of Commissions Paid*"
+      }
+    ],
+    platforms: ["MT4", "MT5", "cTrader"],
+    paymentOptions: ["Direct to broker account (Daily)", "Monthly Cash Back"],
+    featured: true
+  },
+  {
     id: "roboforex",
     name: "RoboForex",
-    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSN_DX_bdv6PwTaDmP76_9A0Jy7fx4Hl22Xg&s",
+    logo: "/images/brokers/roboforex-logo.png",
     rating: 4.2,
     accountTypes: [
       {
@@ -66,68 +87,68 @@ export const brokersData: Broker[] = [
     affiliateLink: "https://my.roboforex.com/en/?a=ztwx"
   },
   {
-    id: "fbs",
-    name: "FBS",
-    logo: "https://fbs.com/cabinet/assets/img/logo.svg",
+    id: "thinkmarkets",
+    name: "ThinkMarkets",
+    logo: "/images/brokers/thinkmarkets-logo.png",
     rating: 4.3,
     accountTypes: [
       {
         name: "Standard",
-        description: "$3.50 Per Lot"
+        description: "$3.64 Per Lot"
       },
       {
-        name: "Micro",
-        description: "$2.00 Per Lot"
+        name: "ThinkZero",
+        description: "$1.50 Per Lot"
       },
       {
-        name: "Zero Spread",
-        description: "$1.00 Per Lot"
+        name: "Standard ThinkTrader",
+        description: "$3.32 Per Lot"
       }
     ],
-    platforms: ["MT4", "MT5"],
+    platforms: ["MT4", "MT5", "ThinkTrader"],
     paymentOptions: ["Monthly Cash Back"],
     featured: true
   },
   {
-    id: "icmarkets",
-    name: "IC Markets",
-    logo: "https://play-lh.googleusercontent.com/NQC5zyAMHoPDBDTcUqz-oGezCTU5Hj6kV7NL5bYgWV49wR9uXYEbZ8yL1YWaewW39rDI=w240-h480-rw",
+    id: "tickmill",
+    name: "Tickmill",
+    logo: "/images/brokers/tickmill-logo.png",
     rating: 4.8,
     accountTypes: [
       {
-        name: "Standard",
-        description: "$7.00 Per Lot"
+        name: "Classic",
+        description: "$7.75 Per Lot"
       },
       {
-        name: "Raw Spread",
+        name: "ECN Pro",
         description: ["$1.55 Per Lot +", "5% Direct Commission Reduction"]
       },
       {
-        name: "cTrader",
-        description: "$3.50 Per Lot"
+        name: "VIP",
+        description: "$1.55 Per Lot"
       }
     ],
-    platforms: ["MT4", "MT5", "cTrader"],
+    platforms: ["MT4", "MT5"],
     paymentOptions: ["Monthly Cash Back - Real Time Reports"],
     featured: true
   },
   {
-    id: "xm",
-    name: "XM",
-    logo: "https://cloud.xm-cdn.com/static/xm/common/logos/revamp/XM-logo.jpg",
-    rating: 4.5,
+    id: "titanfx",
+    name: "Titan FX",
+    logo: "/images/brokers/titanfx-logo.png",
+    rating: 3.9,
     accountTypes: [
       {
-        name: "Micro",
-        description: "$2.5 Per Lot"
+        name: "Zero Blade",
+        description: "$0.9 Per Lot"
       },
       {
-        name: "Standard",
-        description: "$5 Per Lot"
+        name: "Zero Standard",
+        description: "0.3 Pips"
       },
       {
-        name: "XM Ultra Low",
-        description: "$1.0 Per Lot"
+        name: "Zero Micro",
+        description: "0.36 Pips"
       }
     ],
     platforms: ["MT4", "MT5"],

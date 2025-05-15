@@ -1,7 +1,0 @@
-
-/* This file contains any additional styles needed for the navbar components */
-/* Most styling is already handled by the Tailwind classes */
-
-.nav-item {
-  @apply px-3 py-2 text-sm text-white hover:text-jaguargold transition-colors;
-}
