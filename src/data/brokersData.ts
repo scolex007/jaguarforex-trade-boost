@@ -40,7 +40,6 @@ export const brokersData: Broker[] = [
     ],
     platforms: ["MT4", "MT5"],
     paymentOptions: ["Monthly Cash Back"],
-    affiliateLink: "https://one.exnesstrack.org/a/tffad7az66",
     featured: true
   },
   {
@@ -64,7 +63,7 @@ export const brokersData: Broker[] = [
     ],
     platforms: ["MT4", "MT5", "cTrader", "R Trader"],
     paymentOptions: ["Direct to broker account (Daily)", "Monthly Cash Back"],
-    affiliateLink: "https://my.roboforex.com/ph/?a=ztwx"
+    affiliateLink: "https://my.roboforex.com/en/?a=ztwx"
   },
   {
     id: "fbs",
@@ -87,7 +86,6 @@ export const brokersData: Broker[] = [
     ],
     platforms: ["MT4", "MT5"],
     paymentOptions: ["Monthly Cash Back"],
-    affiliateLink: "https://fbs.partners?ibl=586643&ibp=21023205",
     featured: true
   },
   {
@@ -111,7 +109,6 @@ export const brokersData: Broker[] = [
     ],
     platforms: ["MT4", "MT5", "cTrader"],
     paymentOptions: ["Monthly Cash Back - Real Time Reports"],
-    affiliateLink: "https://icmarkets.com/?camp=56951",
     featured: true
   },
   {
@@ -134,8 +131,7 @@ export const brokersData: Broker[] = [
       }
     ],
     platforms: ["MT4", "MT5"],
-    paymentOptions: ["Monthly Cash Back"],
-    affiliateLink: "https://clicks.pipaffiliates.com/c?c=576677&l=en&p=0"
+    paymentOptions: ["Monthly Cash Back"]
   }
 ];
 
