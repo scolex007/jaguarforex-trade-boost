@@ -2,12 +2,15 @@
 import { Button } from "@/components/ui/button";
 import { DollarSign, CheckCircle, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getBrokerById } from "@/data/brokersData";
 
 const CashbackSection = () => {
   const [tradingVolume, setTradingVolume] = useState(100);
   const [selectedBroker, setSelectedBroker] = useState("exness");
   const [monthlyEstimate, setMonthlyEstimate] = useState(0);
   const [annualEstimate, setAnnualEstimate] = useState(0);
+  const navigate = useNavigate();
   
   // Define broker rates
   const brokerRates = {
@@ -31,6 +34,10 @@ const CashbackSection = () => {
 
   const handleBrokerChange = (e) => {
     setSelectedBroker(e.target.value);
+  };
+
+  const handleCashbackRegister = () => {
+    navigate(`/cashback/register?broker=${selectedBroker}`);
   };
 
   return (
@@ -82,7 +89,7 @@ const CashbackSection = () => {
               
               <Button 
                 className="w-full btn-primary"
-                onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}
+                onClick={handleCashbackRegister}
               >
                 Start Earning Cashback
               </Button>
