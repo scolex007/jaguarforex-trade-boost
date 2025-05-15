@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import TradingGuide from "./pages/TradingGuide";
 import MarketAnalysis from "./pages/MarketAnalysis";
 import ToolDetail from "./pages/ToolDetail";
+import Cashback from "./pages/Cashback"; // Add the new import
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/resources/trading-guide" element={<TradingGuide />} />
             <Route path="/resources/market-analysis" element={<MarketAnalysis />} />
+            <Route path="/cashback" element={<Cashback />} /> {/* Add the new route */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
