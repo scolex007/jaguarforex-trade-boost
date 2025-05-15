@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import TradingGuide from "./pages/TradingGuide";
 import MarketAnalysis from "./pages/MarketAnalysis";
 import ToolDetail from "./pages/ToolDetail";
+import Cashback from "./pages/Cashback";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/tools/:toolId" element={<ToolDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/cashback" element={<Cashback />} />
             <Route path="/resources/trading-guide" element={<TradingGuide />} />
             <Route path="/resources/market-analysis" element={<MarketAnalysis />} />
             <Route path="/dashboard" element={
