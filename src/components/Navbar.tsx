@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, User, LogOut } from "lucide-react";
@@ -53,8 +54,8 @@ const Navbar = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
             <a href="/#features" className="nav-item">Features</a>
-            <a href="/#tools" className="nav-item">Trading Tools</a>
-            <a href="/#cashback" className="nav-item">Cashback</a>
+            <Link to="/tools" className="nav-item">Trading Tools</Link>
+            <Link to="/cashback" className="nav-item">Cashback</Link>
             <a href="/#faq" className="nav-item">FAQ</a>
             
             <div className="relative group">
@@ -132,8 +133,8 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-2 py-2">
             <a href="/#features" className="block py-2 px-4 hover:bg-jaguarblue-700">Features</a>
-            <a href="/#tools" className="block py-2 px-4 hover:bg-jaguarblue-700">Trading Tools</a>
-            <a href="/#cashback" className="block py-2 px-4 hover:bg-jaguarblue-700">Cashback</a>
+            <Link to="/tools" className="block py-2 px-4 hover:bg-jaguarblue-700">Trading Tools</Link>
+            <Link to="/cashback" className="block py-2 px-4 hover:bg-jaguarblue-700">Cashback</Link>
             <a href="/#faq" className="block py-2 px-4 hover:bg-jaguarblue-700">FAQ</a>
             
             <div className="py-2 px-4">
