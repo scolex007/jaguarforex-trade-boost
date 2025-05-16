@@ -31,10 +31,8 @@ Detailed Information:
 
 IMPORTANT: If you don't know the answer, acknowledge that and suggest the user contact support at support@jaguarforex.com.`;
 
-// OpenRouter API configuration
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// Use import.meta.env instead of process.env for Vite
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || 'sk-or-v1-your_key_here';
+// Backend proxy API configuration 
+const OPENROUTER_API_URL = 'https://my.jaguarforex.com/api/chatbot/send';
 
 // Initialize conversation with system prompt
 export const initializeConversation = (): ChatMessage[] => {
@@ -43,27 +41,21 @@ export const initializeConversation = (): ChatMessage[] => {
   ];
 };
 
-// Send message to OpenRouter API
+// Send message to backend proxy API
 export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse> => {
   try {
     // Filter out system messages for displaying in the UI
     const displayMessages = messages.filter(msg => msg.role !== 'system');
-    console.log('Sending messages to OpenRouter:', displayMessages);
+    console.log('Sending messages to backend proxy:', displayMessages);
 
     const response = await axios.post(
       OPENROUTER_API_URL,
       {
-        model: 'gpt-3.5-turbo', // You can change this to other supported models
         messages: messages,
-        temperature: 0.7,
-        max_tokens: 1000,
       },
       {
         headers: {
-          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://jaguarforex.com', // Replace with your actual domain
-          'X-Title': 'JaguarForex Assistant'
         }
       }
     );
@@ -73,7 +65,7 @@ export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse
       message: assistantMessage 
     };
   } catch (error) {
-    console.error('Error calling OpenRouter API:', error);
+    console.error('Error calling backend proxy API:', error);
     return { 
       message: { 
         role: 'assistant', 
