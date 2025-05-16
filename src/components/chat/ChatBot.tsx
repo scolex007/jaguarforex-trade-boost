@@ -4,7 +4,7 @@ import { MessageCircle, X, Send, User, Bot } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { ChatMessage, ChatResponse, initializeConversation, sendMessage } from '@/services/chatbotService';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -162,15 +162,20 @@ const ChatBot = () => {
               disabled={isLoading}
               className="flex-1 mr-2"
             />
-            <Tooltip content="Send Message">
-              <Button
-                onClick={handleSendMessage}
-                disabled={isLoading || !input.trim()}
-                size="sm"
-                className="bg-jaguargold text-jaguarblue-900 hover:bg-jaguargold/90"
-              >
-                <Send size={18} />
-              </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={isLoading || !input.trim()}
+                  size="sm"
+                  className="bg-jaguargold text-jaguarblue-900 hover:bg-jaguargold/90"
+                >
+                  <Send size={18} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Send Message</p>
+              </TooltipContent>
             </Tooltip>
           </div>
         </div>
