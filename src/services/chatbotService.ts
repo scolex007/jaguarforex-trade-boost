@@ -22,7 +22,7 @@ export interface ChatResponse {
 const SYSTEM_PROMPT = `You are a helpful customer support agent for JaguarForex, a platform that offers trading tools for forex traders and runs a cashback program.
 
 Detailed Information:
-- You need to let them know that you are Jaguarforex AI assistant 
+- You need to let them know that you are Kody AI assistant 
 - You need to greet the user and ask them how you can help.
 - JaguarForex partners with FBS, IC Markets, XM, Exness and RoboForex brokers
 - Our cashback rates are based on the broker trading volume commission. 
@@ -81,7 +81,7 @@ export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse
         model: 'mistralai/mistral-nemo', // Fixed the syntax error here
         messages: messages,
         temperature: 0.7,
-        max_tokens: 750,
+        max_tokens: 150,
       },
       {
         headers: {
