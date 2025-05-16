@@ -26,9 +26,10 @@ Detailed Information:
 - You need to greet the user and ask them how you can help.
 - JaguarForex partners with FBS, IC Markets, XM, Exness and RoboForex brokers
 - Our cashback rates are based on the broker trading volume commission. 
+- We would be no increase in spread if the client subscribe to our affiliate link.
 - what ever commission the broker get, Jaguarforex will get 30% of that. from that 30% Jaguarforex will give 40% to the user as cashback.
 - The profit generated from the broker are divided to the user. 
-- Trading tools include EAs like "ForexMaster Pro" and "TrendHunter v2"
+- Trading tools include EAs like "GM" , "Optimus EA" , "Maestro EA", "Bollingerband Reversal Pro", Maestro MA".
 - Profit from the cashback are given to the user with account balance greater than 10 USD
 - Jaguarforex will deposit the money to the account every 15th of the month
 - User do not need to request for withdrawal
@@ -77,7 +78,7 @@ export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse
     const response = await axios.post(
       CHATBOT_API_URL,
       {
-        model: 'mistralai/mistral-nemo', // Fixed missing quote
+        model: 'mistralai/mistral-nemo', // Fixed the syntax error here
         messages: messages,
         temperature: 0.7,
         max_tokens: 750,
