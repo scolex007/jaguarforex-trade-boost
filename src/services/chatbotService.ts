@@ -1,4 +1,9 @@
 
+/**
+ * Chatbot service for JaguarForex using OpenRouter API via backend proxy
+ * This service handles communication with the PHP backend
+ */
+
 import axios from 'axios';
 
 // Interface for message structure
@@ -20,7 +25,8 @@ Detailed Information:
 - You need to let them know that you are Jaguarforex AI assistant 
 - You need to greet the user and ask them how you can help.
 - JaguarForex partners with FBS, IC Markets, XM, Exness and RoboForex brokers
-- Our cashback rates are: 0.8 pips for major pairs, 1.2 pips for exotic pairs
+- Our cashback rates are based on the broker trading volume commission. 
+- what ever commission the broker get, Jaguarforex will get 30% of that. from that 30% Jaguarforex will give 40% to the user as cashback.
 - The profit generated from the broker are divided to the user. 
 - Trading tools include EAs like "ForexMaster Pro" and "TrendHunter v2"
 - Profit from the cashback are given to the user with account balance greater than 10 USD
@@ -31,8 +37,10 @@ Detailed Information:
 
 IMPORTANT: If you don't know the answer, acknowledge that and suggest the user contact support at support@jaguarforex.com.`;
 
-// Backend proxy API configuration 
-const OPENROUTER_API_URL = 'https://my.jaguarforex.com/api/chatbot/send';
+// API configuration - using Backend proxy instead of direct OpenRouter access
+const API_BASE_URL = 'https://my.jaguarforex.com/api';
+const CHATBOT_API_URL = `${API_BASE_URL}/chatbot/send`;
+const TEST_API_URL = `${API_BASE_URL}/chatbot/test`;
 
 // Initialize conversation with system prompt
 export const initializeConversation = (): ChatMessage[] => {
@@ -41,31 +49,70 @@ export const initializeConversation = (): ChatMessage[] => {
   ];
 };
 
-// Send message to backend proxy API
+/**
+ * Test the API connection
+ * Use this first to verify the backend is accessible
+ */
+export const testApiConnection = async (): Promise<boolean> => {
+  try {
+    console.log('Testing chatbot API connection...');
+    const response = await axios.get(TEST_API_URL, {
+      withCredentials: true
+    });
+    console.log('API test response:', response.data);
+    return response.data.status === 'success';
+  } catch (error) {
+    console.error('API test failed:', error);
+    return false;
+  }
+};
+
+// Send message via backend proxy
 export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse> => {
   try {
     // Filter out system messages for displaying in the UI
     const displayMessages = messages.filter(msg => msg.role !== 'system');
-    console.log('Sending messages to backend proxy:', displayMessages);
+    console.log('Sending messages to chatbot API:', displayMessages);
 
     const response = await axios.post(
-      OPENROUTER_API_URL,
+      CHATBOT_API_URL,
       {
+        model: 'mistralai/mistral-nemo', // Fixed missing quote
         messages: messages,
+        temperature: 0.7,
+        max_tokens: 750,
       },
       {
         headers: {
           'Content-Type': 'application/json',
-        }
+          // Add auth token if available
+          ...(localStorage.getItem('jaguarforex_token') && {
+            'Authorization': `Bearer ${localStorage.getItem('jaguarforex_token')}`
+          })
+        },
+        withCredentials: true // Important for CORS with credentials
       }
     );
 
+    console.log('Chatbot API response:', response.data);
     const assistantMessage = response.data.choices[0].message;
     return { 
       message: assistantMessage 
     };
   } catch (error) {
-    console.error('Error calling backend proxy API:', error);
+    console.error('Error calling chatbot API:', error);
+    
+    // Detailed error logging for debugging
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers,
+        config: error.config
+      });
+    }
+    
     return { 
       message: { 
         role: 'assistant', 
