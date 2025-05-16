@@ -33,7 +33,8 @@ IMPORTANT: If you don't know the answer, acknowledge that and suggest the user c
 
 // OpenRouter API configuration
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || 'sk-or-v1-your_key_here';
+// Use import.meta.env instead of process.env for Vite
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || 'sk-or-v1-your_key_here';
 
 // Initialize conversation with system prompt
 export const initializeConversation = (): ChatMessage[] => {
