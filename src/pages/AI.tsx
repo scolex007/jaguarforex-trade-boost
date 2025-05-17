@@ -1,189 +1,338 @@
-
-import { useState, useRef, useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { 
+import { useState, useRef, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Loader2, Send, Bot, User, Check, ChevronDown } from 'lucide-react';
+import Navbar from '@/components/navbar/Navbar';
+import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
-  SelectValue 
+  SelectValue,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
-import { sendMessage, ChatMessage } from "@/services/chatbotService";
-
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-interface ModelOption {
-  name: string;
-  id: string;
-}
-
-const modelOptions: ModelOption[] = [
-  { name: "Meta: Llama 3.3 8B Instruct", id: "meta-llama/llama-3.3-8b-instruct:free" },
-  { name: "OpenAI: GPT-4o Mini", id: "openai/gpt-4o-mini" },
-  { name: "Google: Gemini 2.0 Flash", id: "google/gemini-2.0-flash-001" },
-  { name: "DeepSeek: DeepSeek V3 0324", id: "deepseek/deepseek-chat-v3-0324" }
-];
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Message, sendMessage, ModelOption, availableModels } from '@/services/aiAssistantService';
 
 const AI = () => {
-  const [input, setInput] = useState("");
+  // State for messages, input, and loading status
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(modelOptions[0].id);
-  
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [input, setInput] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedModel, setSelectedModel] = useState<string>('mistralai/mistral-nemo');
 
+  // Refs for scrolling and input focus
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Scroll to bottom when messages change
   useEffect(() => {
-    // Scroll to bottom when messages change
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollToBottom();
   }, [messages]);
 
-  // Focus input field on page load
+  // Focus textarea on load
   useEffect(() => {
-    inputRef.current?.focus();
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+  // Function to scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!input.trim()) return;
-    
-    const newUserMessage: Message = { role: 'user', content: input };
-    setMessages(prevMessages => [...prevMessages, newUserMessage]);
-    setInput("");
+  // Handle sending a message
+  const handleSendMessage = async () => {
+    if (input.trim() === '' || isLoading) return;
+
+    const userMessage: Message = { role: 'user', content: input };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
     setIsLoading(true);
 
     try {
-      // Prepare messages for API with correct typing
-      const apiMessages: ChatMessage[] = [
-        { role: 'system', content: 'You are a helpful AI assistant for JaguarForex.' },
-        ...messages.map(msg => ({ 
-          role: msg.role as 'user' | 'assistant', 
-          content: msg.content 
-        })),
-        { role: newUserMessage.role as 'user', content: newUserMessage.content }
-      ];
-      
-      // Send to backend with selected model
-      const response = await sendMessage(apiMessages, selectedModel);
-      
-      if (response.message) {
-        setMessages(prevMessages => [
-          ...prevMessages, 
-          { role: 'assistant', content: response.message.content }
-        ]);
-      }
+      // If this is the first message, add a welcome message
+      const updatedMessages = messages.length === 0 
+        ? [{ role: 'assistant', content: 'Hello! I\'m your AI assistant. How can I help you today?' }, userMessage] 
+        : [...messages, userMessage];
+
+      const response = await sendMessage(updatedMessages, selectedModel);
+      setMessages(prev => [...prev, response.message]);
     } catch (error) {
-      console.error('Error sending message:', error);
-      setMessages(prevMessages => [
-        ...prevMessages, 
-        { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }
+      console.error('Failed to send message:', error);
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: 'Sorry, there was an error processing your request. Please try again later.'
+        }
       ]);
     } finally {
       setIsLoading(false);
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
     }
   };
 
-  return (
-    <div className="min-h-screen flex flex-col bg-jaguarblue-800">
-      <Navbar />
-      <main className="flex-grow flex flex-col px-4 py-8 max-w-4xl mx-auto w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-4">
-            JaguarForex AI Assistant
-          </h1>
-          <p className="text-gray-300 text-lg">
-            Ask anything about forex trading, our tools, or cashback program
-          </p>
-        </div>
+  // Handle textarea input
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    
+    // Auto-resize textarea
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+  };
 
-        <div className="flex-grow overflow-y-auto mb-6 space-y-6">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-              <Search className="h-12 w-12 mb-4 opacity-50" />
-              <p>Start a conversation with the AI assistant</p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {messages.map((message, index) => (
-                <div 
-                  key={index} 
-                  className={`p-4 rounded-lg max-w-3xl ${
-                    message.role === 'user' 
-                      ? 'bg-jaguarblue-700 ml-auto' 
-                      : 'bg-jaguarblue-600 mr-auto'
-                  }`}
-                >
-                  <p className="text-sm font-semibold mb-1 text-jaguargold">
-                    {message.role === 'user' ? 'You' : 'AI Assistant'}
-                  </p>
-                  <p className="text-white whitespace-pre-wrap">{message.content}</p>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="bg-jaguarblue-600 p-4 rounded-lg max-w-3xl mr-auto">
-                  <p className="text-sm font-semibold mb-1 text-jaguargold">AI Assistant</p>
-                  <div className="flex space-x-2">
-                    <div className="h-2 w-2 bg-jaguargold rounded-full animate-bounce"></div>
-                    <div className="h-2 w-2 bg-jaguargold rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="h-2 w-2 bg-jaguargold rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
-        </div>
-        
-        <div className="flex flex-col space-y-4">
-          <Select
-            value={selectedModel}
-            onValueChange={setSelectedModel}
-          >
-            <SelectTrigger className="w-full md:w-80 bg-jaguarblue-700 border-jaguarblue-600">
-              <SelectValue placeholder="Select a model" />
-            </SelectTrigger>
-            <SelectContent className="bg-jaguarblue-700 border-jaguarblue-600">
-              {modelOptions.map((model) => (
-                <SelectItem key={model.id} value={model.id}>
-                  {model.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+  // Handle key press (Enter to send)
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  // Find model details
+  const getModelDetails = (modelId: string): ModelOption => {
+    return availableModels.find(model => model.id === modelId) || {
+      id: modelId,
+      name: modelId.split('/').pop() || modelId,
+      provider: 'Unknown',
+      description: 'Custom model',
+      contextWindow: 4000
+    };
+  };
+
+  const currentModel = getModelDetails(selectedModel);
+
+  return (
+    <>
+      <Helmet>
+        <title>AI Assistant | JaguarForex</title>
+        <meta name="description" content="Advanced AI assistant for forex trading insights" />
+      </Helmet>
+      
+      <Navbar />
+      
+      <main className="min-h-screen bg-jaguarblue-950 pt-20 pb-16">
+        <div className="container mx-auto px-4 max-w-5xl">
+          {/* Header */}
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="gradient-text">Advanced</span> AI Assistant
+            </h1>
+            <p className="text-gray-300 max-w-3xl mx-auto">
+              Get personalized insights and analysis for your forex trading questions using state-of-the-art AI models.
+            </p>
+          </div>
           
-          <form onSubmit={handleSubmit} className="flex w-full">
-            <Input
-              ref={inputRef}
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Ask anything..."
-              className="flex-grow bg-jaguarblue-700 border-jaguarblue-600 text-white"
-              disabled={isLoading}
-            />
-            <Button 
-              type="submit" 
-              className="ml-2 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
-              disabled={isLoading || !input.trim()}
-            >
-              Send
-            </Button>
-          </form>
+          {/* Chat interface */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Model selection sidebar */}
+            <div className="md:col-span-1">
+              <Card className="bg-jaguarblue-900 border-jaguarblue-700">
+                <CardHeader>
+                  <CardTitle className="text-lg">Select AI Model</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Choose the AI model that best fits your needs
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Select
+                    value={selectedModel}
+                    onValueChange={setSelectedModel}
+                  >
+                    <SelectTrigger className="bg-jaguarblue-800 border-jaguarblue-700">
+                      <SelectValue placeholder="Select a model" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-jaguarblue-800 border-jaguarblue-700">
+                      <SelectGroup>
+                        <SelectLabel>Anthropic</SelectLabel>
+                        {availableModels.filter(m => m.provider === 'Anthropic').map(model => (
+                          <SelectItem key={model.id} value={model.id}>
+                            {model.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                      <SelectGroup>
+                        <SelectLabel>OpenAI</SelectLabel>
+                        {availableModels.filter(m => m.provider === 'OpenAI').map(model => (
+                          <SelectItem key={model.id} value={model.id}>
+                            {model.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                      <SelectGroup>
+                        <SelectLabel>Mistral AI</SelectLabel>
+                        {availableModels.filter(m => m.provider === 'Mistral AI').map(model => (
+                          <SelectItem key={model.id} value={model.id}>
+                            {model.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="mt-4 space-y-2">
+                    <h4 className="text-sm font-medium">Current Model: {currentModel.name}</h4>
+                    <p className="text-xs text-gray-400">{currentModel.description}</p>
+                    <div className="text-xs text-gray-400 flex items-center">
+                      <span>Provider: {currentModel.provider}</span>
+                      <span className="mx-2">•</span>
+                      <span>Context: {(currentModel.contextWindow / 1000).toFixed(0)}K tokens</span>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex flex-col items-start border-t border-jaguarblue-700 pt-4">
+                  <h4 className="text-sm font-medium mb-2">Tips:</h4>
+                  <ul className="text-xs text-gray-400 space-y-1">
+                    <li className="flex items-start">
+                      <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
+                      <span>Ask specific, detailed questions</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
+                      <span>Include all relevant context</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
+                      <span>Try different models for different tasks</span>
+                    </li>
+                  </ul>
+                </CardFooter>
+              </Card>
+            </div>
+            
+            {/* Chat window */}
+            <div className="md:col-span-2 flex flex-col">
+              <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex-1 flex flex-col">
+                <CardHeader className="border-b border-jaguarblue-700 py-3">
+                  <div className="flex items-center">
+                    <Bot className="h-5 w-5 text-jaguargold mr-2" />
+                    <CardTitle className="text-lg">Advanced Trading Assistant</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 overflow-y-auto p-4 h-[500px] space-y-4" id="chat-messages">
+                  {/* Welcome message if no messages */}
+                  {messages.length === 0 && (
+                    <div className="bg-jaguarblue-800/50 rounded-lg p-4 text-center">
+                      <h3 className="text-lg font-medium mb-2 text-jaguargold">Welcome to JaguarForex AI Assistant</h3>
+                      <p className="text-gray-300">
+                        I can help with forex trading questions, market analysis, and trading strategies. How can I assist you today?
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Display messages */}
+                  {messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${
+                        msg.role === 'user' ? 'justify-end' : 'justify-start'
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[85%] rounded-lg p-4 ${
+                          msg.role === 'user'
+                            ? 'bg-jaguargold/20 text-white'
+                            : 'bg-jaguarblue-800 text-gray-200'
+                        }`}
+                      >
+                        {msg.role === 'assistant' && (
+                          <div className="flex items-center mb-2">
+                            <Bot className="h-4 w-4 text-jaguargold mr-1" />
+                            <span className="text-xs font-medium text-jaguargold">AI Assistant</span>
+                          </div>
+                        )}
+                        
+                        <div className="whitespace-pre-wrap">{msg.content}</div>
+                        
+                        {msg.role === 'user' && (
+                          <div className="flex items-center justify-end mt-1">
+                            <span className="text-xs text-gray-400">You</span>
+                            <User className="h-3 w-3 text-gray-400 ml-1" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Loading indicator */}
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-jaguarblue-800 rounded-lg p-4 max-w-[85%]">
+                        <div className="flex items-center mb-2">
+                          <Bot className="h-4 w-4 text-jaguargold mr-1" />
+                          <span className="text-xs font-medium text-jaguargold">AI Assistant</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 rounded-full bg-jaguargold/60 animate-pulse"></div>
+                          <div className="w-2 h-2 rounded-full bg-jaguargold/60 animate-pulse delay-150"></div>
+                          <div className="w-2 h-2 rounded-full bg-jaguargold/60 animate-pulse delay-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Invisible element to scroll to */}
+                  <div ref={messagesEndRef} />
+                </CardContent>
+                <CardFooter className="border-t border-jaguarblue-700 p-4">
+                  <div className="flex items-end w-full">
+                    <Textarea
+                      ref={textareaRef}
+                      value={input}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Ask about forex trading, market analysis, or trading strategies..."
+                      className="flex-1 bg-jaguarblue-800 border-jaguarblue-700 min-h-[52px]"
+                      disabled={isLoading}
+                    />
+                    <Button
+                      onClick={handleSendMessage}
+                      disabled={isLoading || input.trim() === ''}
+                      className="ml-2 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+                    >
+                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  <div className="w-full text-xs text-gray-500 mt-2">
+                    Press Enter to send, Shift+Enter for new line
+                  </div>
+                </CardFooter>
+              </Card>
+            </div>
+          </div>
+          
+          {/* Disclaimer */}
+          <div className="mt-8 text-center text-sm text-gray-500">
+            <p>
+              AI responses are generated by third-party models and should not be considered as financial advice.
+              Always verify information and consult with professional financial advisors before making trading decisions.
+            </p>
+          </div>
         </div>
       </main>
+      
       <Footer />
-    </div>
+    </>
   );
 };
 
