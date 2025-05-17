@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Download } from "lucide-react";
 import AnimatedTradingChart from "./AnimatedTradingChart";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -17,32 +18,36 @@ const HeroSection = () => {
               Free premium trading tools and cashback rewards on every trade. Join thousands of traders maximizing their forex potential.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button className="btn-primary flex items-center gap-2" onClick={() => window.location.href = "https://my.jaguarforex.com/auth/register/jaguarforex"}>
-                Start Trading <ArrowRight className="h-4 w-4" />
+              <Button className="btn-primary flex items-center gap-2" asChild>
+                <Link to="/cashback">
+                  Get Cashback <ArrowRight className="h-4 w-4" />
+                </Link>
               </Button>
-              <Button variant="outline" className="btn-outline flex items-center gap-2">
-                Download EA <Download className="h-4 w-4" />
+              <Button variant="outline" className="btn-outline flex items-center gap-2" asChild>
+                <Link to="/tools">
+                  Download EA <Download className="h-4 w-4" />
+                </Link>
               </Button>
             </div>
 
             <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto lg:mx-0">
               <div className="bg-jaguarblue-800/70 p-4 rounded-lg">
-                <p className="text-jaguargold text-2xl font-bold">100+</p>
+                <p className="text-jaguargold text-2xl font-bold">10+</p>
                 <p className="text-sm text-gray-300">Trading Indicators</p>
               </div>
               <div className="bg-jaguarblue-800/70 p-4 rounded-lg">
-                <p className="text-jaguargold text-2xl font-bold">50+</p>
+                <p className="text-jaguargold text-2xl font-bold">15+</p>
                 <p className="text-sm text-gray-300">Expert Advisors</p>
               </div>
               <div className="bg-jaguarblue-800/70 p-4 rounded-lg">
-                <p className="text-jaguargold text-2xl font-bold">$2M+</p>
+                <p className="text-jaguargold text-2xl font-bold">$20K+</p>
                 <p className="text-sm text-gray-300">Cashback Paid</p>
               </div>
             </div>
           </div>
           
           <div className="hidden lg:block relative">
-            <div className="bg-jaguarblue-800/50 backdrop-blur-sm rounded-2xl border border-jaguarblue-600 p-6 animate-float shadow-xl h-[380px]">
+            <div className="bg-jaguarblue-800/50 backdrop-blur-sm rounded-2xl border border-jaguarblue-600 p-6 animate-float shadow-xl h-[480px]">
               <AnimatedTradingChart />
             </div>
             
