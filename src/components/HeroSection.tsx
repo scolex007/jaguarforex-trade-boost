@@ -40,7 +40,7 @@ const HeroSection = () => {
                 <p className="text-sm text-gray-300">Expert Advisors</p>
               </div>
               <div className="bg-jaguarblue-800/70 p-4 rounded-lg">
-                <p className="text-jaguargold text-2xl font-bold">$20K+</p>
+                <p className="text-jaguargold text-2xl font-bold">$100K+</p>
                 <p className="text-sm text-gray-300">Cashback Paid</p>
               </div>
             </div>
