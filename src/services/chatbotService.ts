@@ -2,7 +2,6 @@
 /**
  * Chatbot service for JaguarForex using OpenRouter API via backend proxy
  * This service handles communication with the PHP backend
- * SECURITY ENHANCED VERSION - No system prompt in frontend
  */
 
 import axios from 'axios';
@@ -19,21 +18,41 @@ export interface ChatResponse {
   error?: string;
 }
 
-// API configuration
+// System prompt with Jaguarforex information
+const SYSTEM_PROMPT = `You are a helpful customer support agent for JaguarForex, a platform that offers trading tools for forex traders and runs a cashback program.
+
+Detailed Information:
+- You need to let them know that you are Jaguarforex AI assistant 
+- You need to greet the user and ask them how you can help.
+- JaguarForex partners with FBS, IC Markets, XM, Exness and RoboForex brokers
+- Our cashback rates are based on the broker trading volume commission. 
+- We would be no increase in spread if the client subscribe to our affiliate link.
+- what ever commission the broker get, Jaguarforex will get 30% of that. from that 30% Jaguarforex will give 40% to the user as cashback.
+- The profit generated from the broker are divided to the user. 
+- Trading tools include EAs like "GM" , "Optimus EA" , "Maestro EA", "Bollingerband Reversal Pro", Maestro MA".
+- Profit from the cashback are given to the user with account balance greater than 10 USD
+- Jaguarforex will deposit the money to the account every 15th of the month
+- User do not need to request for withdrawal
+- All trading tools are free
+- Users must verify their trading accounts before receiving cashback
+
+IMPORTANT: If you don't know the answer, acknowledge that and suggest the user contact support at support@jaguarforex.com.`;
+
+// API configuration - using Backend proxy instead of direct OpenRouter access
 const API_BASE_URL = 'https://my.jaguarforex.com/api';
 const CHATBOT_API_URL = `${API_BASE_URL}/chatbot/send`;
 const TEST_API_URL = `${API_BASE_URL}/chatbot/test`;
 
-/**
- * Initialize conversation without system prompt
- * Backend will add its own system prompt for security
- */
+// Initialize conversation with system prompt
 export const initializeConversation = (): ChatMessage[] => {
-  return []; // Empty array - backend will add system prompt
+  return [
+    { role: 'system', content: SYSTEM_PROMPT },
+  ];
 };
 
 /**
  * Test the API connection
+ * Use this first to verify the backend is accessible
  */
 export const testApiConnection = async (): Promise<boolean> => {
   try {
@@ -49,28 +68,23 @@ export const testApiConnection = async (): Promise<boolean> => {
   }
 };
 
-/**
- * Send message to backend chatbot API
- * This version doesn't include any system prompt - all instruction control is on the backend
- */
+// Send message via backend proxy
 export const sendMessage = async (
   messages: ChatMessage[], 
-  modelId: string = 'gryphe/mythomax-l2-13b'
+  modelId: string = 'mistralai/mistral-nemo'
 ): Promise<ChatResponse> => {
   try {
-    // Log messages being sent (without system prompt)
-    console.log('Sending messages to chatbot API:', messages);
-
-    // Filter system messages if any were somehow added
-    const cleanMessages = messages.filter(msg => msg.role !== 'system');
+    // Filter out system messages for displaying in the UI
+    const displayMessages = messages.filter(msg => msg.role !== 'system');
+    console.log('Sending messages to chatbot API:', displayMessages);
 
     const response = await axios.post(
       CHATBOT_API_URL,
       {
         model: modelId,
-        messages: cleanMessages, // Send only user and assistant messages
+        messages: messages,
         temperature: 0.7,
-        max_tokens: 150,
+        max_tokens: 750,
       },
       {
         headers: {
@@ -80,7 +94,7 @@ export const sendMessage = async (
             'Authorization': `Bearer ${localStorage.getItem('jaguarforex_token')}`
           })
         },
-        withCredentials: true
+        withCredentials: true // Important for CORS with credentials
       }
     );
 
@@ -91,18 +105,6 @@ export const sendMessage = async (
     };
   } catch (error) {
     console.error('Error calling chatbot API:', error);
-    
-    // Handle rate limiting specifically
-    if (axios.isAxiosError(error) && error.response?.status === 429) {
-      const retryAfter = error.response.headers['retry-after'] || 60;
-      return { 
-        message: { 
-          role: 'assistant', 
-          content: `I'm receiving too many requests right now. Please try again in ${retryAfter} seconds.` 
-        },
-        error: 'Rate limit exceeded'
-      };
-    }
     
     // Detailed error logging for debugging
     if (axios.isAxiosError(error)) {

@@ -12,7 +12,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Search } from "lucide-react";
-import { sendMessage } from "@/services/chatbotService";
+import { sendMessage, ChatMessage } from "@/services/chatbotService";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -65,15 +65,18 @@ const AI = () => {
     setIsLoading(true);
 
     try {
-      // Prepare messages for API
-      const apiMessages = [
+      // Prepare messages for API with correct typing
+      const apiMessages: ChatMessage[] = [
         { role: 'system', content: 'You are a helpful AI assistant for JaguarForex.' },
-        ...messages.map(msg => ({ role: msg.role, content: msg.content })),
-        { role: newUserMessage.role, content: newUserMessage.content }
+        ...messages.map(msg => ({ 
+          role: msg.role as 'user' | 'assistant', 
+          content: msg.content 
+        })),
+        { role: newUserMessage.role as 'user', content: newUserMessage.content }
       ];
       
       // Send to backend with selected model
-      const response = await sendMessage(apiMessages);
+      const response = await sendMessage(apiMessages, selectedModel);
       
       if (response.message) {
         setMessages(prevMessages => [
