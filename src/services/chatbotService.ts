@@ -63,10 +63,10 @@ export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse
     const response = await axios.post(
       CHATBOT_API_URL,
       {
-        model: 'mistralai/mistral-nemo',
+        model: 'gryphe/mythomax-l2-13b',
         messages: cleanMessages, // Send only user and assistant messages
         temperature: 0.7,
-        max_tokens: 750,
+        max_tokens: 150,
       },
       {
         headers: {
