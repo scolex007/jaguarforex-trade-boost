@@ -177,7 +177,7 @@ const AI = () => {
             
             {/* Chat messages with scroll area */}
             <CardContent className="p-0 flex-1">
-              <ScrollArea className="h-[500px] p-4">
+              <ScrollArea className="h-[700px] p-4">
                 <div className="space-y-4 px-4">
                   {/* Welcome message if no messages */}
                   {messages.length === 0 && (
