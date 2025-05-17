@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -136,7 +137,7 @@ const AI = () => {
       <Navbar />
       
       <main className="min-h-screen bg-jaguarblue-950 pt-20 pb-16">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4 max-w-6xl">
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
@@ -148,92 +149,36 @@ const AI = () => {
           </div>
           
           {/* Chat interface */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Model selection sidebar */}
-            <div className="md:col-span-1">
-              <Card className="bg-jaguarblue-900 border-jaguarblue-700">
-                <CardHeader>
-                  <CardTitle className="text-lg">Select AI Model</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Choose the AI model that best fits your needs
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Select
-                    value={selectedModel}
-                    onValueChange={setSelectedModel}
-                  >
-                    <SelectTrigger className="bg-jaguarblue-800 border-jaguarblue-700">
-                      <SelectValue placeholder="Select a model" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-jaguarblue-800 border-jaguarblue-700">
-                      <SelectGroup>
-                        <SelectLabel>Anthropic</SelectLabel>
-                        {availableModels.filter(m => m.provider === 'Anthropic').map(model => (
-                          <SelectItem key={model.id} value={model.id}>
-                            {model.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                      <SelectGroup>
-                        <SelectLabel>OpenAI</SelectLabel>
-                        {availableModels.filter(m => m.provider === 'OpenAI').map(model => (
-                          <SelectItem key={model.id} value={model.id}>
-                            {model.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                      <SelectGroup>
-                        <SelectLabel>Mistral AI</SelectLabel>
-                        {availableModels.filter(m => m.provider === 'Mistral AI').map(model => (
-                          <SelectItem key={model.id} value={model.id}>
-                            {model.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  
-                  <div className="mt-4 space-y-2">
-                    <h4 className="text-sm font-medium">Current Model: {currentModel.name}</h4>
-                    <p className="text-xs text-gray-400">{currentModel.description}</p>
-                    <div className="text-xs text-gray-400 flex items-center">
-                      <span>Provider: {currentModel.provider}</span>
-                      <span className="mx-2">•</span>
-                      <span>Context: {(currentModel.contextWindow / 1000).toFixed(0)}K tokens</span>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col items-start border-t border-jaguarblue-700 pt-4">
-                  <h4 className="text-sm font-medium mb-2">Tips:</h4>
-                  <ul className="text-xs text-gray-400 space-y-1">
-                    <li className="flex items-start">
-                      <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
-                      <span>Ask specific, detailed questions</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
-                      <span>Include all relevant context</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
-                      <span>Try different models for different tasks</span>
-                    </li>
-                  </ul>
-                </CardFooter>
-              </Card>
-            </div>
+          <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex flex-col">
+            {/* Model selector in header */}
+            <CardHeader className="border-b border-jaguarblue-700 py-3 flex flex-row items-center justify-between">
+              <div className="flex items-center">
+                <Bot className="h-5 w-5 text-jaguargold mr-2" />
+                <CardTitle className="text-lg">Advanced Trading Assistant</CardTitle>
+              </div>
+              <div className="flex items-center">
+                <Select
+                  value={selectedModel}
+                  onValueChange={setSelectedModel}
+                >
+                  <SelectTrigger className="w-[180px] bg-jaguarblue-800 border-jaguarblue-700">
+                    <SelectValue placeholder="Select a model" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-jaguarblue-800 border-jaguarblue-700">
+                    {availableModels.map((model) => (
+                      <SelectItem key={model.id} value={model.id}>
+                        {model.provider}: {model.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardHeader>
             
-            {/* Chat window */}
-            <div className="md:col-span-2 flex flex-col">
-              <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex-1 flex flex-col">
-                <CardHeader className="border-b border-jaguarblue-700 py-3">
-                  <div className="flex items-center">
-                    <Bot className="h-5 w-5 text-jaguargold mr-2" />
-                    <CardTitle className="text-lg">Advanced Trading Assistant</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto p-4 h-[500px] space-y-4" id="chat-messages">
+            {/* Chat messages with scroll area */}
+            <CardContent className="p-0 flex-1">
+              <ScrollArea className="h-[500px] p-4">
+                <div className="space-y-4 px-4">
                   {/* Welcome message if no messages */}
                   {messages.length === 0 && (
                     <div className="bg-jaguarblue-800/50 rounded-lg p-4 text-center">
@@ -297,36 +242,77 @@ const AI = () => {
                   
                   {/* Invisible element to scroll to */}
                   <div ref={messagesEndRef} />
-                </CardContent>
-                <CardFooter className="border-t border-jaguarblue-700 p-4">
-                  <div className="flex items-end w-full">
-                    <Textarea
-                      ref={textareaRef}
-                      value={input}
-                      onChange={handleInputChange}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Ask about forex trading, market analysis, or trading strategies..."
-                      className="flex-1 bg-jaguarblue-800 border-jaguarblue-700 min-h-[52px]"
-                      disabled={isLoading}
-                    />
-                    <Button
-                      onClick={handleSendMessage}
-                      disabled={isLoading || input.trim() === ''}
-                      className="ml-2 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
-                    >
-                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                  <div className="w-full text-xs text-gray-500 mt-2">
-                    Press Enter to send, Shift+Enter for new line
-                  </div>
-                </CardFooter>
-              </Card>
-            </div>
+                </div>
+              </ScrollArea>
+            </CardContent>
+            
+            {/* Input area */}
+            <CardFooter className="border-t border-jaguarblue-700 p-4">
+              <div className="flex items-end w-full">
+                <Textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Ask about forex trading, market analysis, or trading strategies..."
+                  className="flex-1 bg-jaguarblue-800 border-jaguarblue-700 min-h-[52px]"
+                  disabled={isLoading}
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={isLoading || input.trim() === ''}
+                  className="ml-2 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+                >
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                </Button>
+              </div>
+              <div className="w-full text-xs text-gray-500 mt-2">
+                Press Enter to send, Shift+Enter for new line
+              </div>
+            </CardFooter>
+          </Card>
+          
+          {/* Model info and disclaimer */}
+          <div className="mt-6 flex flex-wrap gap-4">
+            <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex-1">
+              <CardHeader className="py-3">
+                <CardTitle className="text-sm">Current Model: {currentModel.name}</CardTitle>
+              </CardHeader>
+              <CardContent className="py-2">
+                <p className="text-xs text-gray-400">{currentModel.description}</p>
+                <div className="text-xs text-gray-400 flex items-center mt-1">
+                  <span>Provider: {currentModel.provider}</span>
+                  <span className="mx-2">•</span>
+                  <span>Context: {(currentModel.contextWindow / 1000).toFixed(0)}K tokens</span>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex-1">
+              <CardHeader className="py-3">
+                <CardTitle className="text-sm">Usage Tips</CardTitle>
+              </CardHeader>
+              <CardContent className="py-2">
+                <ul className="text-xs text-gray-400 space-y-1">
+                  <li className="flex items-start">
+                    <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
+                    <span>Ask specific, detailed questions</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
+                    <span>Include all relevant context</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-3 w-3 mr-1 mt-0.5 text-green-500" />
+                    <span>Try different models for different tasks</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
           
           {/* Disclaimer */}
-          <div className="mt-8 text-center text-sm text-gray-500">
+          <div className="mt-6 text-center text-sm text-gray-500">
             <p>
               AI responses are generated by third-party models and should not be considered as financial advice.
               Always verify information and consult with professional financial advisors before making trading decisions.

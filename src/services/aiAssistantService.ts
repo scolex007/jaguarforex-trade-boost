@@ -31,46 +31,46 @@ export interface ModelOption {
 // Available models
 export const availableModels: ModelOption[] = [
   { 
-    id: 'anthropic/claude-3-opus',
-    name: 'Claude 3 Opus',
-    provider: 'Anthropic',
-    description: 'Most powerful model with advanced reasoning',
-    contextWindow: 200000
+    id: 'mistralai/mistral-nemo',
+    name: 'Mistral Nemo',
+    provider: 'Mistral',
+    description: 'Advanced multimodal capabilities',
+    contextWindow: 128000
   },
   {
-    id: 'anthropic/claude-3-sonnet',
-    name: 'Claude 3 Sonnet',
-    provider: 'Anthropic',
-    description: 'Balanced performance and capability',
-    contextWindow: 180000
-  },
-  {
-    id: 'anthropic/claude-3-haiku',
-    name: 'Claude 3 Haiku',
+    id: 'anthropic/claude-3.5-haiku-20241022',
+    name: 'Claude 3.5 Haiku (2024-10-22)',
     provider: 'Anthropic',
     description: 'Fast and efficient for simpler tasks',
     contextWindow: 150000
   },
   {
-    id: 'mistralai/mistral-nemo',
-    name: 'Mistral Nemo',
-    provider: 'Mistral AI',
-    description: 'Advanced multimodal capabilities',
+    id: 'openai/gpt-4o-mini-2024-07-18',
+    name: 'GPT-4o-mini',
+    provider: 'OpenAI',
+    description: 'Compact but powerful assistant',
     contextWindow: 128000
   },
   {
-    id: 'openai/gpt-4-turbo',
-    name: 'GPT-4 Turbo',
-    provider: 'OpenAI',
+    id: 'google/gemini-2.5-flash-preview',
+    name: 'Gemini 2.5 Flash Preview',
+    provider: 'Google',
+    description: 'Fast responses with latest capabilities',
+    contextWindow: 128000
+  },
+  {
+    id: 'qwen/qwen2.5-coder-7b-instruct',
+    name: 'Qwen 2.5 Coder',
+    provider: 'Qwen',
+    description: 'Specialized for coding tasks',
+    contextWindow: 32000
+  },
+  {
+    id: 'meta-llama/llama-4-maverick',
+    name: 'Llama 4 Maverick',
+    provider: 'Meta',
     description: 'Advanced reasoning and problem-solving',
     contextWindow: 128000
-  },
-  {
-    id: 'openai/gpt-3.5-turbo',
-    name: 'GPT-3.5 Turbo',
-    provider: 'OpenAI',
-    description: 'Fast and cost-effective assistant',
-    contextWindow: 16000
   }
 ];
 
