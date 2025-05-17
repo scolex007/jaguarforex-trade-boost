@@ -1,15 +1,22 @@
 
 /**
- * AI Assistant service for JaguarForex
- * Service for interacting with AI models via backend API
+ * AI Assistant service for the custom AI page
+ * This service connects to OpenRouter API via backend proxy
+ * with a different system prompt than the chatbot
  */
 
 import axios from 'axios';
 
-// Interface for message structure - matches ChatMessage in chatbotService
+// Interface for message structure
 export interface Message {
   role: 'system' | 'user' | 'assistant';
   content: string;
+}
+
+// Interface for response
+export interface AssistantResponse {
+  message: Message;
+  error?: string;
 }
 
 // Interface for model options
@@ -21,89 +28,127 @@ export interface ModelOption {
   contextWindow: number;
 }
 
-// Available models for selection
+// Available models
 export const availableModels: ModelOption[] = [
-  {
-    id: "meta-llama/llama-3.3-8b-instruct:free",
-    name: "Llama 3.3 8B Instruct",
-    provider: "Meta",
-    description: "Compact but powerful instruction-following model from Meta",
-    contextWindow: 8000
+  { 
+    id: 'anthropic/claude-3-opus',
+    name: 'Claude 3 Opus',
+    provider: 'Anthropic',
+    description: 'Most powerful model with advanced reasoning',
+    contextWindow: 200000
   },
   {
-    id: "openai/gpt-4o-mini",
-    name: "GPT-4o Mini",
-    provider: "OpenAI",
-    description: "Optimized smaller version of GPT-4o with great capabilities",
+    id: 'anthropic/claude-3-sonnet',
+    name: 'Claude 3 Sonnet',
+    provider: 'Anthropic',
+    description: 'Balanced performance and capability',
+    contextWindow: 180000
+  },
+  {
+    id: 'anthropic/claude-3-haiku',
+    name: 'Claude 3 Haiku',
+    provider: 'Anthropic',
+    description: 'Fast and efficient for simpler tasks',
+    contextWindow: 150000
+  },
+  {
+    id: 'mistralai/mistral-nemo',
+    name: 'Mistral Nemo',
+    provider: 'Mistral AI',
+    description: 'Advanced multimodal capabilities',
+    contextWindow: 128000
+  },
+  {
+    id: 'openai/gpt-4-turbo',
+    name: 'GPT-4 Turbo',
+    provider: 'OpenAI',
+    description: 'Advanced reasoning and problem-solving',
+    contextWindow: 128000
+  },
+  {
+    id: 'openai/gpt-3.5-turbo',
+    name: 'GPT-3.5 Turbo',
+    provider: 'OpenAI',
+    description: 'Fast and cost-effective assistant',
     contextWindow: 16000
-  },
-  {
-    id: "google/gemini-2.0-flash-001",
-    name: "Gemini 2.0 Flash",
-    provider: "Google",
-    description: "Fast streaming model from Google's Gemini lineup",
-    contextWindow: 8000
-  },
-  {
-    id: "deepseek/deepseek-chat-v3-0324",
-    name: "DeepSeek V3 0324",
-    provider: "DeepSeek",
-    description: "Advanced model from DeepSeek that excels at code and reasoning",
-    contextWindow: 10000
-  },
-  {
-    id: "mistralai/mistral-nemo",
-    name: "Mistral Nemo",
-    provider: "Mistral AI",
-    description: "Mistral AI's powerful successor to Mixtral",
-    contextWindow: 12000
   }
 ];
 
 // API configuration
 const API_BASE_URL = 'https://my.jaguarforex.com/api';
-const AI_ASSISTANT_URL = `${API_BASE_URL}/assistant`;
+const AI_ASSISTANT_URL = `${API_BASE_URL}/ai-assistant`;
 
-// Send message to AI
+/**
+ * Send a message to the AI assistant via backend proxy
+ * This implementation uses the custom AI endpoint which has a different system prompt
+ */
 export const sendMessage = async (
   messages: Message[],
-  modelId: string = 'mistralai/mistral-nemo'
-): Promise<{message: Message}> => {
+  selectedModel: string
+): Promise<AssistantResponse> => {
   try {
-    // In a real implementation, we would call the actual API
-    // For now, simulate a response with a delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Get the last user message
-    const lastUserMessage = messages.filter(m => m.role === 'user').pop();
-    
-    // Generate a simple response based on the last message
-    let responseText = "I'm sorry, I don't have enough information to provide a helpful response.";
-    
-    if (lastUserMessage) {
-      const query = lastUserMessage.content.toLowerCase();
-      
-      if (query.includes('hello') || query.includes('hi') || query.includes('hey')) {
-        responseText = "Hello! How can I help you with your forex trading questions today?";
-      } else if (query.includes('forex') || query.includes('trading')) {
-        responseText = "Forex trading involves buying one currency while simultaneously selling another. The foreign exchange market is the largest and most liquid financial market in the world. Would you like to know more about specific trading strategies or risk management?";
-      } else if (query.includes('cashback')) {
-        responseText = "JaguarForex offers a competitive cashback program that returns a portion of your trading spread to you. You can register for the program on our website and start earning cashback on all your trades.";
-      } else if (query.includes('tools') || query.includes('indicators')) {
-        responseText = "We offer a variety of trading tools including Expert Advisors, custom indicators, and trading scripts. All our tools are designed to help you make more informed trading decisions.";
-      } else {
-        responseText = `Thank you for your question about "${lastUserMessage.content}". I'll do my best to provide a helpful answer based on my knowledge of forex trading and market analysis.`;
+    console.log('Sending messages to AI assistant:', messages);
+    console.log('Using model:', selectedModel);
+
+    // Filter out any system messages from the frontend
+    const userMessages = messages.filter(msg => msg.role !== 'system');
+
+    const response = await axios.post(
+      AI_ASSISTANT_URL,
+      {
+        model: selectedModel,
+        messages: userMessages,
+        temperature: 0.7,
+        max_tokens: 1000,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(localStorage.getItem('jaguarforex_token') && {
+            'Authorization': `Bearer ${localStorage.getItem('jaguarforex_token')}`
+          })
+        },
+        withCredentials: true
       }
+    );
+
+    console.log('AI assistant response:', response.data);
+    const assistantMessage = response.data.choices[0].message;
+    return { 
+      message: assistantMessage 
+    };
+  } catch (error) {
+    console.error('Error calling AI assistant API:', error);
+    
+    // Handle rate limiting specifically
+    if (axios.isAxiosError(error) && error.response?.status === 429) {
+      const retryAfter = error.response.headers['retry-after'] || 60;
+      return { 
+        message: { 
+          role: 'assistant', 
+          content: `I'm receiving too many requests right now. Please try again in ${retryAfter} seconds.` 
+        },
+        error: 'Rate limit exceeded'
+      };
     }
     
-    const assistantMessage: Message = {
-      role: 'assistant',
-      content: responseText
-    };
+    // Detailed error logging for debugging
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers,
+        config: error.config
+      });
+    }
     
-    return { message: assistantMessage };
-  } catch (error) {
-    console.error('Error in AI assistant service:', error);
-    throw error;
+    return { 
+      message: { 
+        role: 'assistant', 
+        content: 'Sorry, I encountered an error. Please try again later or contact support@jaguarforex.com.' 
+      },
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
   }
 };

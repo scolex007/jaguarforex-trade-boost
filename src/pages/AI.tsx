@@ -1,7 +1,8 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Loader2, Send, Bot, User, Check, ChevronDown } from 'lucide-react';
-import Navbar from '@/components/navbar/Navbar';
+import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,7 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Message, sendMessage, ModelOption, availableModels } from '@/services/aiAssistantService';
+import { Message, sendMessage, ModelOption, availableModels, AssistantResponse } from '@/services/aiAssistantService';
 
 const AI = () => {
   // State for messages, input, and loading status
@@ -68,8 +69,11 @@ const AI = () => {
 
     try {
       // If this is the first message, add a welcome message
-      const updatedMessages = messages.length === 0 
-        ? [{ role: 'assistant', content: 'Hello! I\'m your AI assistant. How can I help you today?' }, userMessage] 
+      const updatedMessages: Message[] = messages.length === 0 
+        ? [
+            { role: 'assistant', content: 'Hello! I\'m your AI assistant. How can I help you today?' } as Message,
+            userMessage
+          ]
         : [...messages, userMessage];
 
       const response = await sendMessage(updatedMessages, selectedModel);
