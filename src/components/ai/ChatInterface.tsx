@@ -48,7 +48,7 @@ const ChatInterface = ({ availableModels }: ChatInterfaceProps) => {
       // If this is the first message, add a welcome message
       const updatedMessages: Message[] = messages.length === 0 
         ? [
-            { role: 'assistant', content: 'Hello! I\'m your AI assistant. How can I help you today?' } as Message,
+            { role: 'assistant', content: 'Welcome to JaguarForex AI Assistant\n\nI can help with forex trading questions, market analysis, and trading strategies. How can I assist you today?' } as Message,
             userMessage
           ]
         : [...messages, userMessage];
@@ -73,7 +73,7 @@ const ChatInterface = ({ availableModels }: ChatInterfaceProps) => {
   };
 
   // Find model details
-  const getModelDetails = (modelId: string): ModelOption => {
+  const getCurrentModel = (modelId: string): ModelOption => {
     return availableModels.find(model => model.id === modelId) || {
       id: modelId,
       name: modelId.split('/').pop() || modelId,
@@ -83,7 +83,7 @@ const ChatInterface = ({ availableModels }: ChatInterfaceProps) => {
     };
   };
 
-  const currentModel = getModelDetails(selectedModel);
+  const currentModel = getCurrentModel(selectedModel);
 
   return (
     <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex flex-col">

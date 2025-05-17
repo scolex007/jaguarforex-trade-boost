@@ -1,14 +1,21 @@
 
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ChatInterface from '@/components/ai/ChatInterface';
 import InfoCards from '@/components/ai/InfoCards';
-import { availableModels } from '@/services/aiAssistantService';
+import { availableModels, ModelOption } from '@/services/aiAssistantService';
 
 const AI = () => {
   // Get the first model as default
   const defaultModel = availableModels[0];
+  const [selectedModel, setSelectedModel] = useState<string>(defaultModel.id);
+
+  // Function to get current model details
+  const getCurrentModel = (modelId: string): ModelOption => {
+    return availableModels.find(model => model.id === modelId) || defaultModel;
+  };
 
   return (
     <>
@@ -32,10 +39,12 @@ const AI = () => {
           </div>
           
           {/* Chat interface */}
-          <ChatInterface availableModels={availableModels} />
+          <ChatInterface 
+            availableModels={availableModels} 
+          />
           
           {/* Info cards */}
-          <InfoCards currentModel={defaultModel} />
+          <InfoCards currentModel={getCurrentModel(selectedModel)} />
           
           {/* Disclaimer */}
           <div className="mt-6 text-center text-sm text-gray-500">

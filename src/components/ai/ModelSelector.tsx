@@ -1,5 +1,5 @@
 
-import { Check, ChevronDown } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { ModelOption } from '@/services/aiAssistantService';
 import {
   Select,
@@ -17,11 +17,17 @@ interface ModelSelectorProps {
 }
 
 const ModelSelector = ({ selectedModel, setSelectedModel, availableModels }: ModelSelectorProps) => {
+  // Function to handle model selection
+  const handleModelChange = (value: string) => {
+    setSelectedModel(value);
+    // Pass selected model to parent component through props
+  };
+
   return (
     <div className="flex items-center">
       <Select
         value={selectedModel}
-        onValueChange={setSelectedModel}
+        onValueChange={handleModelChange}
       >
         <SelectTrigger className="w-[200px] bg-jaguarblue-800 border-jaguarblue-700">
           <SelectValue placeholder="Select a model" />

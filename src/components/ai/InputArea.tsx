@@ -40,7 +40,7 @@ const InputArea = ({ input, setInput, handleSendMessage, isLoading }: InputAreaP
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder="Ask about forex trading, market analysis, or trading strategies..."
-        className="flex-1 bg-jaguarblue-800 border-jaguarblue-700 min-h-[52px]"
+        className="flex-1 bg-jaguarblue-800 border-jaguarblue-700 min-h-[52px] w-full"
         disabled={isLoading}
       />
       <Button
