@@ -1,3 +1,4 @@
+
 /**
  * Chatbot service for JaguarForex using OpenRouter API via backend proxy
  * This service handles communication with the PHP backend
@@ -52,7 +53,10 @@ export const testApiConnection = async (): Promise<boolean> => {
  * Send message to backend chatbot API
  * This version doesn't include any system prompt - all instruction control is on the backend
  */
-export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse> => {
+export const sendMessage = async (
+  messages: ChatMessage[], 
+  modelId: string = 'gryphe/mythomax-l2-13b'
+): Promise<ChatResponse> => {
   try {
     // Log messages being sent (without system prompt)
     console.log('Sending messages to chatbot API:', messages);
@@ -63,7 +67,7 @@ export const sendMessage = async (messages: ChatMessage[]): Promise<ChatResponse
     const response = await axios.post(
       CHATBOT_API_URL,
       {
-        model: 'gryphe/mythomax-l2-13b',
+        model: modelId,
         messages: cleanMessages, // Send only user and assistant messages
         temperature: 0.7,
         max_tokens: 150,

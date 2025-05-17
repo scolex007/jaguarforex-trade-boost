@@ -17,6 +17,7 @@ import MarketAnalysis from "./pages/MarketAnalysis";
 import ToolDetail from "./pages/ToolDetail";
 import Cashback from "./pages/Cashback";
 import CashbackRegister from "./pages/CashbackRegister";
+import AI from "./pages/AI";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ChatBot from "./components/chat/ChatBot";
@@ -42,6 +43,7 @@ const App = () => {
                 <Route path="/cashback/register" element={<CashbackRegister />} />
                 <Route path="/resources/trading-guide" element={<TradingGuide />} />
                 <Route path="/resources/market-analysis" element={<MarketAnalysis />} />
+                <Route path="/ai" element={<AI />} />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
                     <Dashboard />

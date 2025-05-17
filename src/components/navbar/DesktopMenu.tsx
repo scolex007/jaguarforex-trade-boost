@@ -13,7 +13,7 @@ const DesktopMenu = ({ isResourcesMenuOpen, toggleResourcesMenu }: DesktopMenuPr
       <Link to="/#features" className="nav-item">Features</Link>
       <Link to="/tools" className="nav-item">Trading Tools</Link>
       <Link to="/cashback" className="nav-item">Cashback</Link>
-      <Link to="/#faq" className="nav-item">FAQ</Link>
+      <Link to="/ai" className="nav-item">AI</Link>
       
       <div className="relative group">
         <button 

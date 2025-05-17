@@ -27,7 +27,7 @@ const MobileMenu = ({
       <Link to="/#features" className="block py-2 px-4 hover:bg-jaguarblue-700">Features</Link>
       <Link to="/tools" className="block py-2 px-4 hover:bg-jaguarblue-700">Trading Tools</Link>
       <Link to="/cashback" className="block py-2 px-4 hover:bg-jaguarblue-700">Cashback</Link>
-      <Link to="/#faq" className="block py-2 px-4 hover:bg-jaguarblue-700">FAQ</Link>
+      <Link to="/ai" className="block py-2 px-4 hover:bg-jaguarblue-700">AI</Link>
       
       <div className="py-2 px-4">
         <button 
