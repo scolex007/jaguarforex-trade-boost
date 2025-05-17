@@ -48,28 +48,28 @@ export const availableModels: ModelOption[] = [
     id: 'openai/gpt-4o-mini-2024-07-18',
     name: 'GPT-4o-mini',
     provider: 'OpenAI',
-    description: 'Compact but powerful assistant',
+    description: 'Balanced performance and efficiency',
     contextWindow: 128000
   },
   {
     id: 'google/gemini-2.5-flash-preview',
     name: 'Gemini 2.5 Flash Preview',
     provider: 'Google',
-    description: 'Fast responses with latest capabilities',
-    contextWindow: 128000
+    description: 'Fast responses with comprehensive knowledge',
+    contextWindow: 100000
   },
   {
     id: 'qwen/qwen2.5-coder-7b-instruct',
-    name: 'Qwen 2.5 Coder',
+    name: 'Qwen 2.5 Coder 7B',
     provider: 'Qwen',
-    description: 'Specialized for coding tasks',
+    description: 'Specialized for coding and technical queries',
     contextWindow: 32000
   },
   {
     id: 'meta-llama/llama-4-maverick',
     name: 'Llama 4 Maverick',
     provider: 'Meta',
-    description: 'Advanced reasoning and problem-solving',
+    description: 'Powerful open-source large language model',
     contextWindow: 128000
   }
 ];

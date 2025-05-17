@@ -41,10 +41,13 @@ const AI = () => {
   // Refs for scrolling and input focus
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length > 0) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   // Focus textarea on load
@@ -161,7 +164,7 @@ const AI = () => {
                   value={selectedModel}
                   onValueChange={setSelectedModel}
                 >
-                  <SelectTrigger className="w-[180px] bg-jaguarblue-800 border-jaguarblue-700">
+                  <SelectTrigger className="w-[200px] bg-jaguarblue-800 border-jaguarblue-700">
                     <SelectValue placeholder="Select a model" />
                   </SelectTrigger>
                   <SelectContent className="bg-jaguarblue-800 border-jaguarblue-700">
@@ -176,8 +179,8 @@ const AI = () => {
             </CardHeader>
             
             {/* Chat messages with scroll area */}
-            <CardContent className="p-0 flex-1">
-              <ScrollArea className="h-[700px] p-4">
+            <CardContent className="p-0 flex-1" ref={chatContainerRef}>
+              <ScrollArea className="h-[500px] p-4">
                 <div className="space-y-4 px-4">
                   {/* Welcome message if no messages */}
                   {messages.length === 0 && (
@@ -248,7 +251,7 @@ const AI = () => {
             
             {/* Input area */}
             <CardFooter className="border-t border-jaguarblue-700 p-4">
-              <div className="flex items-end w-full">
+              <div className="flex w-full">
                 <Textarea
                   ref={textareaRef}
                   value={input}
@@ -261,7 +264,7 @@ const AI = () => {
                 <Button
                   onClick={handleSendMessage}
                   disabled={isLoading || input.trim() === ''}
-                  className="ml-2 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+                  className="ml-2 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 h-auto"
                 >
                   {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </Button>
@@ -272,9 +275,9 @@ const AI = () => {
             </CardFooter>
           </Card>
           
-          {/* Model info and disclaimer */}
-          <div className="mt-6 flex flex-wrap gap-4">
-            <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex-1">
+          {/* Model info and disclaimer in a horizontal layout */}
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="bg-jaguarblue-900 border-jaguarblue-700">
               <CardHeader className="py-3">
                 <CardTitle className="text-sm">Current Model: {currentModel.name}</CardTitle>
               </CardHeader>
@@ -288,7 +291,7 @@ const AI = () => {
               </CardContent>
             </Card>
             
-            <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex-1">
+            <Card className="bg-jaguarblue-900 border-jaguarblue-700">
               <CardHeader className="py-3">
                 <CardTitle className="text-sm">Usage Tips</CardTitle>
               </CardHeader>
