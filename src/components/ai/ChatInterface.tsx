@@ -15,14 +15,15 @@ import InputArea from './InputArea';
 
 interface ChatInterfaceProps {
   availableModels: ModelOption[];
+  selectedModel: string;
+  setSelectedModel: (modelId: string) => void;
 }
 
-const ChatInterface = ({ availableModels }: ChatInterfaceProps) => {
+const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: ChatInterfaceProps) => {
   // State for messages, input, and loading status
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedModel, setSelectedModel] = useState<string>('mistralai/mistral-nemo');
 
   // Refs for the container
   const chatContainerRef = useRef<HTMLDivElement>(null);

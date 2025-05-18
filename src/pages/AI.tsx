@@ -40,7 +40,9 @@ const AI = () => {
           
           {/* Chat interface */}
           <ChatInterface 
-            availableModels={availableModels} 
+            availableModels={availableModels}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
           />
           
           {/* Info cards */}
