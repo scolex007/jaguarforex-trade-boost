@@ -28,7 +28,7 @@ export interface ModelOption {
   contextWindow: number;
 }
 
-// Available models
+// Available models with their exact model IDs required by OpenRouter
 export const availableModels: ModelOption[] = [
   { 
     id: 'mistralai/mistral-nemo',
@@ -96,7 +96,7 @@ export const sendMessage = async (
     const response = await axios.post(
       AI_ASSISTANT_URL,
       {
-        model: selectedModel,
+        model: selectedModel, // Use exactly what was selected
         messages: userMessages,
         temperature: 0.7,
         max_tokens: 1000,
