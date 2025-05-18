@@ -19,9 +19,13 @@ interface ModelSelectorProps {
 const ModelSelector = ({ selectedModel, setSelectedModel, availableModels }: ModelSelectorProps) => {
   // Function to handle model selection
   const handleModelChange = (value: string) => {
+    console.log('Model changed to:', value);
     setSelectedModel(value);
-    // Pass selected model to parent component through props
   };
+
+  // Find the currently selected model
+  const currentModel = availableModels.find(model => model.id === selectedModel);
+  const displayName = currentModel ? `${currentModel.provider}: ${currentModel.name}` : selectedModel;
 
   return (
     <div className="flex items-center">
@@ -30,14 +34,18 @@ const ModelSelector = ({ selectedModel, setSelectedModel, availableModels }: Mod
         onValueChange={handleModelChange}
       >
         <SelectTrigger className="w-[200px] bg-jaguarblue-800 border-jaguarblue-700">
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder="Select a model">
+            {displayName}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent className="bg-jaguarblue-800 border-jaguarblue-700">
-          {availableModels.map((model) => (
-            <SelectItem key={model.id} value={model.id}>
-              {model.provider}: {model.name}
-            </SelectItem>
-          ))}
+          <SelectGroup>
+            {availableModels.map((model) => (
+              <SelectItem key={model.id} value={model.id}>
+                {model.provider}: {model.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>

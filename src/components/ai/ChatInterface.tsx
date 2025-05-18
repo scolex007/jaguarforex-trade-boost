@@ -54,6 +54,8 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
           ]
         : [...messages, userMessage];
 
+      // Pass the exact selected model ID to the API
+      console.log('Selected model for API call:', selectedModel);
       const response = await sendMessage(updatedMessages, selectedModel);
       setMessages(prev => [...prev, response.message]);
     } catch (error) {
@@ -72,19 +74,6 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
       }
     }
   };
-
-  // Find model details
-  const getCurrentModel = (modelId: string): ModelOption => {
-    return availableModels.find(model => model.id === modelId) || {
-      id: modelId,
-      name: modelId.split('/').pop() || modelId,
-      provider: 'Unknown',
-      description: 'Custom model',
-      contextWindow: 4000
-    };
-  };
-
-  const currentModel = getCurrentModel(selectedModel);
 
   return (
     <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex flex-col">
@@ -117,6 +106,7 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
             setInput={setInput}
             handleSendMessage={handleSendMessage}
             isLoading={isLoading}
+            textareaRef={textareaRef}
           />
           <div className="w-full text-xs text-gray-500 mt-2">
             Press Enter to send, Shift+Enter for new line

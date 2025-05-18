@@ -1,5 +1,5 @@
 
-import { useRef } from 'react';
+import { useRef, RefObject } from 'react';
 import { Loader2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,10 +9,12 @@ interface InputAreaProps {
   setInput: (input: string) => void;
   handleSendMessage: () => void;
   isLoading: boolean;
+  textareaRef?: RefObject<HTMLTextAreaElement>;
 }
 
-const InputArea = ({ input, setInput, handleSendMessage, isLoading }: InputAreaProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+const InputArea = ({ input, setInput, handleSendMessage, isLoading, textareaRef }: InputAreaProps) => {
+  const localTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const activeRef = textareaRef || localTextareaRef;
 
   // Handle textarea input
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -35,7 +37,7 @@ const InputArea = ({ input, setInput, handleSendMessage, isLoading }: InputAreaP
   return (
     <div className="flex w-full">
       <Textarea
-        ref={textareaRef}
+        ref={activeRef}
         value={input}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
