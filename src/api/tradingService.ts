@@ -1,10 +1,11 @@
-
-import api from '../services/api';
+import api from './api';
+import { brokersData } from '../data/brokersData';
 
 // Types
 export interface Broker {
   id: string;
   name: string;
+  affiliateLink?: string;
 }
 
 export interface TradingAccount {
@@ -24,12 +25,13 @@ export const tradingService = {
    */
   getBrokers: async (): Promise<Broker[]> => {
     try {
-      // Access the axios instance methods directly
-      const response = await api.axios.get('/trading/brokers');
+      const response = await api.get('/trading/brokers');
       return response.data.brokers;
     } catch (error) {
       console.error('Error fetching brokers:', error);
-      throw error;
+      // Fall back to static data if API fails
+      console.log('Using fallback broker data');
+      return brokersData;
     }
   },
 
@@ -42,8 +44,7 @@ export const tradingService = {
     isDemo?: boolean;
   }): Promise<any> => {
     try {
-      // Access the axios instance methods directly
-      const response = await api.axios.post('/trading/register', data);
+      const response = await api.post('/trading/register', data);
       return response.data;
     } catch (error) {
       console.error('Error registering account:', error);
@@ -58,8 +59,7 @@ export const tradingService = {
   getAccounts: async (status?: string | null): Promise<TradingAccount[]> => {
     try {
       const url = status ? `/trading/accounts?status=${status}` : '/trading/accounts';
-      // Access the axios instance methods directly
-      const response = await api.axios.get(url);
+      const response = await api.get(url);
       return response.data.accounts;
     } catch (error) {
       console.error('Error fetching accounts:', error);
