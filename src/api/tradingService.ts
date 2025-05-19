@@ -1,3 +1,4 @@
+
 import api from '../services/api';
 
 // Types
@@ -23,7 +24,8 @@ export const tradingService = {
    */
   getBrokers: async (): Promise<Broker[]> => {
     try {
-      const response = await api.get('/trading/brokers');
+      // Access the axios instance methods directly
+      const response = await api.axios.get('/trading/brokers');
       return response.data.brokers;
     } catch (error) {
       console.error('Error fetching brokers:', error);
@@ -40,7 +42,8 @@ export const tradingService = {
     isDemo?: boolean;
   }): Promise<any> => {
     try {
-      const response = await api.post('/trading/register', data);
+      // Access the axios instance methods directly
+      const response = await api.axios.post('/trading/register', data);
       return response.data;
     } catch (error) {
       console.error('Error registering account:', error);
@@ -55,7 +58,8 @@ export const tradingService = {
   getAccounts: async (status?: string | null): Promise<TradingAccount[]> => {
     try {
       const url = status ? `/trading/accounts?status=${status}` : '/trading/accounts';
-      const response = await api.get(url);
+      // Access the axios instance methods directly
+      const response = await api.axios.get(url);
       return response.data.accounts;
     } catch (error) {
       console.error('Error fetching accounts:', error);

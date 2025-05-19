@@ -1,8 +1,8 @@
-
 import axios from 'axios';
 import { toast } from 'sonner';
 
-const api = axios.create({
+// Create the base axios instance
+const axiosInstance = axios.create({
   baseURL: 'https://my.jaguarforex.com/api'
 });
 
@@ -11,7 +11,7 @@ let consecutiveFailures = 0;
 const FAILURE_THRESHOLD = 3;
 const failedRequests = new Map();
 
-api.interceptors.request.use(config => {
+axiosInstance.interceptors.request.use(config => {
   const token = localStorage.getItem('auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -23,7 +23,7 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   response => {
     // Reset failure counter on success
     consecutiveFailures = 0;
@@ -101,10 +101,10 @@ const isRateLimited = (endpoint: string): boolean => {
   return stillLimited;
 };
 
-// Attach the isRateLimited function to the api object
-const apiWithHelpers = {
-  ...api,
+// Export a complete API service with both the axios instance and helper methods
+const api = {
+  axios: axiosInstance,
   isRateLimited
 };
 
-export default apiWithHelpers;
+export default api;
