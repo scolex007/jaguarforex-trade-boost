@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,8 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Broker } from '@/data/brokersData';
-import { tradingService } from '../../api/tradingService';
+import { tradingService, Broker } from '../../api/tradingService';
 import { Loader2 } from 'lucide-react';
 
 // Form validation schema
@@ -22,12 +20,12 @@ const formSchema = z.object({
   })
 });
 
-interface CashbackRegistrationFormProps {
+interface NewAccountFormProps {
   broker: Broker | null;
   onSuccess: () => void;
 }
 
-const CashbackRegistrationForm = ({ broker, onSuccess }: CashbackRegistrationFormProps) => {
+const CashbackRegistrationForm = ({ broker, onSuccess }: NewAccountFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize form
@@ -84,7 +82,7 @@ const CashbackRegistrationForm = ({ broker, onSuccess }: CashbackRegistrationFor
             className="w-full bg-jaguargold text-jaguarblue-900 hover:bg-jaguargold/90"
             onClick={handleCashbackRedirect}
           >
-            Open Broker Website
+            Monthly Cash Back
           </Button>
         </div>
       </Card>
