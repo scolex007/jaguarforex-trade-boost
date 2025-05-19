@@ -80,16 +80,17 @@ const AccountsTab = () => {
     fetchAccounts();
   };
   
+  // Fixed the function to return a valid Badge variant
   const getStatusBadgeProps = (status: TradingAccount["status"]) => {
     switch(status) {
       case "approved":
-        return { variant: "default", className: "bg-green-500" };
+        return { variant: "default" as const, className: "bg-green-500" };
       case "pending":
-        return { variant: "secondary", className: "bg-amber-500 text-amber-900" };
+        return { variant: "secondary" as const, className: "bg-amber-500 text-amber-900" };
       case "rejected":
-        return { variant: "destructive" };
+        return { variant: "destructive" as const };
       default:
-        return { variant: "outline" };
+        return { variant: "outline" as const };
     }
   };
 
