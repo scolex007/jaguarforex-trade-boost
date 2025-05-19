@@ -1,23 +1,45 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import { User, LogOut, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountsTab from '@/components/TradingAccount/AccountsTab';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // If auth is fully loaded and no user, redirect to login
+    if (!loading && !user) {
+      navigate('/login');
+    }
+  }, [loading, user, navigate]);
 
   const handleLogout = async () => {
     await logout();
     // Navigation is handled in the AuthContext
   };
+
+  // If still loading, show a loading indicator
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-jaguarblue-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-jaguargold"></div>
+      </div>
+    );
+  }
+
+  // Only render dashboard content if we have a user
+  if (!user) {
+    return null; // Will be redirected by the useEffect above
+  }
 
   return (
     <div className="min-h-screen bg-jaguarblue-800">
