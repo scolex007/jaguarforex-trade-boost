@@ -1,4 +1,3 @@
-
 import api from './api';
 import { Broker, brokersData } from '../data/brokersData';
 
@@ -57,7 +56,8 @@ export const tradingService = {
       return response.data.accounts;
     } catch (error) {
       console.error('Error fetching accounts:', error);
-      throw error;
+      // Return empty array instead of throwing
+      return [];
     }
   }
 };
