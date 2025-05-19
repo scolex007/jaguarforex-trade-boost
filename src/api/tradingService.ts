@@ -1,62 +1,66 @@
+import api from '../services/api';
 
-import axios from 'axios';
-import { toast } from 'sonner';
-import authService from '@/services/authService';
-
-// Type definitions
+// Types
 export interface Broker {
   id: string;
   name: string;
-  logo: string;
-  // Add other broker properties as needed
 }
 
 export interface TradingAccount {
   id: string;
-  brokerId: string;
-  brokerName: string;
-  accountNumber: string;
-  status: "pending" | "approved" | "rejected";
-  registrationDate: string;
-  isDemo: boolean;
+  username: string;
+  account_number: string;
+  service: string;
+  is_demo: string;
+  status: string;
+  dated: string;
 }
 
-export interface AccountRegistrationData {
-  brokerId: string;
-  accountNumber: string;
-  isDemo?: boolean;
-  authorizeContact: boolean;
-}
-
-const API_BASE_URL = 'https://my.jaguarforex.com/api/trading';
-
-/**
- * Trading service for the React frontend
- * This file integrates with the PHP backend at my.jaguarforex.com
- */
-const tradingService = {
+// API functions
+export const tradingService = {
   /**
-   * Fetch list of supported brokers
+   * Get all available brokers
    */
   getBrokers: async (): Promise<Broker[]> => {
-    // To be implemented
-    return [];
+    try {
+      const response = await api.get('/trading/brokers');
+      return response.data.brokers;
+    } catch (error) {
+      console.error('Error fetching brokers:', error);
+      throw error;
+    }
   },
 
   /**
    * Register a new trading account
    */
-  registerAccount: async (data: AccountRegistrationData): Promise<boolean> => {
-    // To be implemented
-    return false;
+  registerAccount: async (data: {
+    broker: string;
+    accountNumber: string;
+    isDemo?: boolean;
+  }): Promise<any> => {
+    try {
+      const response = await api.post('/trading/register', data);
+      return response.data;
+    } catch (error) {
+      console.error('Error registering account:', error);
+      throw error;
+    }
   },
 
   /**
-   * Get user's trading accounts
+   * Get user trading accounts
+   * @param status Filter by status: 'pending'(0), 'approved'(1), 'rejected'(2), or 'all'
    */
-  getAccounts: async (): Promise<TradingAccount[]> => {
-    // To be implemented
-    return [];
+  getAccounts: async (status?: string | null): Promise<TradingAccount[]> => {
+    try {
+      const url = status ? `/trading/accounts?status=${status}` : '/trading/accounts';
+      const response = await api.get(url);
+      return response.data.accounts;
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+      throw error;
+    }
   }
 };
 
