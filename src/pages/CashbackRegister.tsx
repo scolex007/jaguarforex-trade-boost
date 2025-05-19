@@ -4,6 +4,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { getBrokerById } from "@/data/brokersData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner"; // Use Sonner toast directly
 import { useAuth } from "../contexts/AuthContext";
 import BrokerHeader from "@/components/cashback/BrokerHeader";
