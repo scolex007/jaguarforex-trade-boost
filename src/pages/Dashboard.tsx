@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import Navbar from '@/components/Navbar';
@@ -6,9 +7,12 @@ import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import { User, LogOut, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AccountsTab from '@/components/TradingAccount/AccountsTab';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState("overview");
 
   const handleLogout = async () => {
     await logout();
@@ -44,46 +48,59 @@ const Dashboard = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
-              <h3 className="text-lg font-semibold text-white mb-4">Account Summary</h3>
-              <div className="space-y-2">
-                <p className="text-gray-300">Member since: <span className="text-white">May 2023</span></p>
-                <p className="text-gray-300">Subscription: <span className="text-jaguargold">Premium</span></p>
-                <p className="text-gray-300">Tools downloaded: <span className="text-white">5</span></p>
-              </div>
-            </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid grid-cols-2 mb-6">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="accounts">Trading Accounts</TabsTrigger>
+            </TabsList>
             
-            <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
-              <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
-              <div className="space-y-4">
-                <div className="border-b border-jaguarblue-600 pb-2">
-                  <p className="text-sm text-gray-400">Yesterday</p>
-                  <p className="text-white">Downloaded JaguarTrend Pro EA</p>
+            <TabsContent value="overview">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
+                  <h3 className="text-lg font-semibold text-white mb-4">Account Summary</h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-300">Member since: <span className="text-white">May 2023</span></p>
+                    <p className="text-gray-300">Subscription: <span className="text-jaguargold">Premium</span></p>
+                    <p className="text-gray-300">Tools downloaded: <span className="text-white">5</span></p>
+                  </div>
                 </div>
-                <div className="border-b border-jaguarblue-600 pb-2">
-                  <p className="text-sm text-gray-400">Last Week</p>
-                  <p className="text-white">Updated account settings</p>
+                
+                <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
+                  <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
+                  <div className="space-y-4">
+                    <div className="border-b border-jaguarblue-600 pb-2">
+                      <p className="text-sm text-gray-400">Yesterday</p>
+                      <p className="text-white">Downloaded JaguarTrend Pro EA</p>
+                    </div>
+                    <div className="border-b border-jaguarblue-600 pb-2">
+                      <p className="text-sm text-gray-400">Last Week</p>
+                      <p className="text-white">Updated account settings</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
-            <h3 className="text-lg font-semibold text-white mb-4">Access PHP Backend</h3>
-            <p className="text-gray-300 mb-4">
-              Access our legacy system for additional features and functionality.
-            </p>
-            <Button 
-              asChild
-              className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
-            >
-              <Link to="/backend">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Access PHP Backend
-              </Link>
-            </Button>
-          </div>
+              <div className="bg-jaguarblue-800 p-6 rounded-lg border border-jaguarblue-600">
+                <h3 className="text-lg font-semibold text-white mb-4">Access PHP Backend</h3>
+                <p className="text-gray-300 mb-4">
+                  Access our legacy system for additional features and functionality.
+                </p>
+                <Button 
+                  asChild
+                  className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
+                >
+                  <Link to="/backend">
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Access PHP Backend
+                  </Link>
+                </Button>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="accounts" className="w-full">
+              <AccountsTab />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
       <Footer />

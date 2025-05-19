@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -79,7 +80,7 @@ const AccountsTab = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold">Trading Accounts</h2>
+        <h2 className="text-2xl font-bold text-white">Trading Accounts</h2>
         <div className="flex gap-2">
           <Button 
             variant="outline" 
@@ -116,11 +117,11 @@ const AccountsTab = () => {
             </div>
           ) : getFilteredAccounts().length > 0 ? (
             getFilteredAccounts().map((account) => (
-              <Card key={account.id} className="overflow-hidden">
+              <Card key={account.id} className="overflow-hidden bg-jaguarblue-800 border-jaguarblue-600">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle>{account.service}</CardTitle>
+                      <CardTitle className="text-white">{account.service}</CardTitle>
                       <CardDescription>
                         Account: {account.account_number} 
                         {account.is_demo === '1' && ' (Demo)'}
@@ -130,20 +131,20 @@ const AccountsTab = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="pb-2">
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-400">
                     Registered: {formatDate(account.dated)}
                   </div>
                 </CardContent>
-                <CardFooter className="text-xs text-gray-400 pt-0">
+                <CardFooter className="text-xs text-gray-500 pt-0">
                   {getRelativeTime(account.dated)}
                 </CardFooter>
               </Card>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 px-4">
+            <div className="flex flex-col items-center justify-center py-12 px-4 bg-jaguarblue-800 rounded-lg border border-jaguarblue-600">
               <Search className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900">No accounts found</h3>
-              <p className="text-sm text-gray-500 text-center mt-1">
+              <h3 className="text-lg font-medium text-white">No accounts found</h3>
+              <p className="text-sm text-gray-400 text-center mt-1">
                 {activeTab === 'all' 
                   ? "You haven't registered any trading accounts yet." 
                   : `You don't have any ${activeTab} trading accounts.`}
@@ -151,7 +152,7 @@ const AccountsTab = () => {
               <Button
                 onClick={() => setIsModalOpen(true)}
                 variant="outline"
-                className="mt-6"
+                className="mt-6 border-jaguargold text-jaguargold hover:bg-jaguargold hover:text-jaguarblue-900"
               >
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Register Account

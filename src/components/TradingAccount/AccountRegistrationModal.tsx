@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
@@ -83,9 +84,9 @@ const AccountRegistrationModal = ({ isOpen, onClose, onSuccess }: AccountRegistr
 
   return (
     <Dialog open={isOpen} onOpenChange={() => !isLoading && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-jaguarblue-700 border-jaguarblue-600 text-white">
         <DialogHeader>
-          <DialogTitle>Register Trading Account</DialogTitle>
+          <DialogTitle className="text-white">Register Trading Account</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
@@ -95,18 +96,18 @@ const AccountRegistrationModal = ({ isOpen, onClose, onSuccess }: AccountRegistr
               name="broker"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Select Broker</FormLabel>
+                  <FormLabel className="text-gray-300">Select Broker</FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
                     defaultValue={field.value}
                     disabled={isLoading}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-jaguarblue-800 border-jaguarblue-600">
                         <SelectValue placeholder="Select a broker" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="bg-jaguarblue-800 border-jaguarblue-600">
                       {brokers.map((broker) => (
                         <SelectItem key={broker.id} value={broker.name}>
                           {broker.name}
@@ -124,12 +125,13 @@ const AccountRegistrationModal = ({ isOpen, onClose, onSuccess }: AccountRegistr
               name="accountNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Account Number</FormLabel>
+                  <FormLabel className="text-gray-300">Account Number</FormLabel>
                   <FormControl>
                     <Input 
                       {...field} 
                       placeholder="Enter your account number" 
                       disabled={isLoading}
+                      className="bg-jaguarblue-800 border-jaguarblue-600"
                     />
                   </FormControl>
                   <FormMessage />
@@ -147,10 +149,11 @@ const AccountRegistrationModal = ({ isOpen, onClose, onSuccess }: AccountRegistr
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       disabled={isLoading}
+                      className="data-[state=checked]:bg-jaguargold data-[state=checked]:border-jaguargold"
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer">
+                    <FormLabel className="cursor-pointer text-gray-300">
                       This is a demo account
                     </FormLabel>
                   </div>
@@ -168,10 +171,11 @@ const AccountRegistrationModal = ({ isOpen, onClose, onSuccess }: AccountRegistr
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       disabled={isLoading}
+                      className="data-[state=checked]:bg-jaguargold data-[state=checked]:border-jaguargold"
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer">
+                    <FormLabel className="cursor-pointer text-gray-300">
                       I authorize JaguarForex to contact the broker on my behalf, if needed to set JaguarForex as my referrer (IB)
                     </FormLabel>
                   </div>
@@ -186,6 +190,7 @@ const AccountRegistrationModal = ({ isOpen, onClose, onSuccess }: AccountRegistr
                 variant="outline" 
                 onClick={onClose}
                 disabled={isLoading}
+                className="border-gray-600 text-gray-300 hover:bg-jaguarblue-600"
               >
                 Cancel
               </Button>
