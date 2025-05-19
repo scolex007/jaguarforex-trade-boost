@@ -62,5 +62,6 @@ export const tradingService = {
   }
 };
 
-export { Broker };
+// Use 'export type' instead of just 'export' for type re-exports
+export type { Broker };
 export default tradingService;
