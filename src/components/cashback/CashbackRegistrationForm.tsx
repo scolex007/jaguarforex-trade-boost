@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,12 +22,12 @@ const formSchema = z.object({
   })
 });
 
-interface NewAccountFormProps {
+interface CashbackRegistrationFormProps {
   broker: Broker | null;
   onSuccess: () => void;
 }
 
-const CashbackRegistrationForm = ({ broker, onSuccess }: NewAccountFormProps) => {
+const CashbackRegistrationForm = ({ broker, onSuccess }: CashbackRegistrationFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize form
@@ -83,7 +84,7 @@ const CashbackRegistrationForm = ({ broker, onSuccess }: NewAccountFormProps) =>
             className="w-full bg-jaguargold text-jaguarblue-900 hover:bg-jaguargold/90"
             onClick={handleCashbackRedirect}
           >
-            Monthly Cash Back
+            Open Broker Website
           </Button>
         </div>
       </Card>

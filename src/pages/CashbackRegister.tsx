@@ -7,9 +7,7 @@ import Footer from "@/components/Footer";
 import { toast } from "sonner"; // Use Sonner toast directly
 import { useAuth } from "../contexts/AuthContext";
 import BrokerHeader from "@/components/cashback/BrokerHeader";
-import RegistrationTypeSelector from "@/components/cashback/RegistrationTypeSelector";
-import NewAccountForm from "@/components/cashback/NewAccountForm";
-import ExistingAccountForm from "@/components/cashback/ExistingAccountForm";
+import CashbackRegistrationForm from "@/components/cashback/CashbackRegistrationForm";
 
 const CashbackRegister = () => {
   console.log("CashbackRegister - Component mounting"); // Add initial debug log
@@ -19,7 +17,6 @@ const CashbackRegister = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   
-  const [registrationType, setRegistrationType] = useState<'new' | 'existing'>('new');
   const [isRedirecting, setIsRedirecting] = useState(false);
   
   // Get the broker information
@@ -57,27 +54,15 @@ const CashbackRegister = () => {
     }
   }, []); // Empty dependency array to run only once
 
-  const handleSubmit = (data: any) => {
-    // Check if user is authenticated
-    if (!isAuthenticated) {
-      toast.error("Authentication required", {
-        description: "Please log in to submit your cashback registration"
-      });
-      navigate('/login');
-      return;
-    }
-
-    // Here you would typically send data to your backend
-    console.log("Submitting form data:", {
-      userId: user?.id,
-      broker: broker?.id,
-      registrationType,
-      ...data
-    });
-    
-    toast.success("Registration submitted", {
+  const handleRegistrationSuccess = () => {
+    toast.success("Registration successful", {
       description: "Your cashback registration has been submitted successfully."
     });
+    
+    // Redirect to dashboard after a short delay
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 1500);
   };
   
   // Show loading state or return null if broker is not available
@@ -104,15 +89,23 @@ const CashbackRegister = () => {
         <div className="max-w-3xl mx-auto">
           <BrokerHeader broker={broker} />
           
-          <RegistrationTypeSelector 
-            registrationType={registrationType}
-            onTypeChange={setRegistrationType}
-          />
+          {!isAuthenticated && (
+            <div className="p-6 mb-6 bg-jaguarblue-700 border border-jaguarblue-600 rounded-lg">
+              <p className="text-white mb-4">You need to be logged in to register for cashback.</p>
+              <Button 
+                className="bg-jaguargold text-jaguarblue-900 hover:bg-jaguargold/90"
+                onClick={() => navigate('/login')}
+              >
+                Login to Continue
+              </Button>
+            </div>
+          )}
           
-          {registrationType === 'new' ? (
-            <NewAccountForm broker={broker} onSubmit={handleSubmit} />
-          ) : (
-            <ExistingAccountForm broker={broker} onSubmit={handleSubmit} />
+          {isAuthenticated && (
+            <CashbackRegistrationForm 
+              broker={broker} 
+              onSuccess={handleRegistrationSuccess} 
+            />
           )}
         </div>
       </main>
