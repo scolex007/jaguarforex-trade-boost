@@ -1,12 +1,6 @@
-import api from './api';
-import { brokersData } from '../data/brokersData';
 
-// Types
-export interface Broker {
-  id: string;
-  name: string;
-  affiliateLink?: string;
-}
+import api from './api';
+import { Broker, brokersData } from '../data/brokersData';
 
 export interface TradingAccount {
   id: string;
@@ -68,4 +62,5 @@ export const tradingService = {
   }
 };
 
+export { Broker };
 export default tradingService;
