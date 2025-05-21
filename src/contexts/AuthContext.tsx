@@ -1,16 +1,8 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { authService } from '../services/api-client';
+import { authService, User } from '../services/auth-service';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  username?: string;
-  [key: string]: any;
-}
 
 interface AuthContextType {
   user: User | null;
