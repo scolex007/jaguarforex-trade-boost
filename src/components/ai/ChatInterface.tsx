@@ -1,15 +1,12 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { Bot } from 'lucide-react';
+import { SendHorizontal } from 'lucide-react';
 import { Message, sendMessage, ModelOption } from '@/services/aiAssistantService';
 import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import ModelSelector from './ModelSelector';
 import MessageDisplay from './MessageDisplay';
 import InputArea from './InputArea';
 
@@ -54,7 +51,6 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
           ]
         : [...messages, userMessage];
 
-      // Pass the exact selected model ID to the API
       console.log('Selected model for API call:', selectedModel);
       const response = await sendMessage(updatedMessages, selectedModel);
       setMessages(prev => [...prev, response.message]);
@@ -76,21 +72,8 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
   };
 
   return (
-    <Card className="bg-jaguarblue-900 border-jaguarblue-700 flex flex-col">
-      {/* Model selector in header */}
-      <CardHeader className="border-b border-jaguarblue-700 py-3 flex flex-row items-center justify-between">
-        <div className="flex items-center">
-          <Bot className="h-5 w-5 text-jaguargold mr-2" />
-          <CardTitle className="text-lg">Advanced Trading Assistant</CardTitle>
-        </div>
-        <ModelSelector 
-          selectedModel={selectedModel}
-          setSelectedModel={setSelectedModel}
-          availableModels={availableModels}
-        />
-      </CardHeader>
-      
-      {/* Chat messages */}
+    <Card className="bg-jaguarblue-900/50 border-jaguarblue-700/30 flex flex-col shadow-lg rounded-xl overflow-hidden">
+      {/* Chat messages - Simplified design */}
       <CardContent className="p-0 flex-1" ref={chatContainerRef}>
         <MessageDisplay 
           messages={messages}
@@ -98,8 +81,8 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
         />
       </CardContent>
       
-      {/* Input area */}
-      <CardFooter className="border-t border-jaguarblue-700 p-4">
+      {/* Input area - Simplified */}
+      <CardFooter className="border-t border-jaguarblue-700/30 p-4">
         <div className="w-full">
           <InputArea 
             input={input}
@@ -108,9 +91,6 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
             isLoading={isLoading}
             textareaRef={textareaRef}
           />
-          <div className="w-full text-xs text-gray-500 mt-2">
-            Press Enter to send, Shift+Enter for new line
-          </div>
         </div>
       </CardFooter>
     </Card>

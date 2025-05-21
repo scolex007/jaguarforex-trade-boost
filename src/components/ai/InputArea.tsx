@@ -1,6 +1,6 @@
 
 import { useRef, RefObject } from 'react';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, SendHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -35,22 +35,26 @@ const InputArea = ({ input, setInput, handleSendMessage, isLoading, textareaRef 
   };
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full items-end gap-2">
       <Textarea
         ref={activeRef}
         value={input}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder="Ask about forex trading, market analysis, or trading strategies..."
-        className="flex-1 bg-jaguarblue-800 border-jaguarblue-700 min-h-[52px] w-full"
+        placeholder="Ask a question about forex trading..."
+        className="flex-1 bg-jaguarblue-800/50 border-jaguarblue-700/30 min-h-[52px] w-full rounded-lg resize-none"
         disabled={isLoading}
       />
       <Button
         onClick={handleSendMessage}
         disabled={isLoading || input.trim() === ''}
-        className="ml-2 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 h-auto"
+        size="icon"
+        className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 h-[52px] w-[52px] rounded-lg"
       >
-        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+        {isLoading ? 
+          <Loader2 className="h-5 w-5 animate-spin" /> : 
+          <SendHorizontal className="h-5 w-5" />
+        }
       </Button>
     </div>
   );
