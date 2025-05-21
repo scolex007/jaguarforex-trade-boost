@@ -7,6 +7,8 @@ import { getToolsData } from "@/data/toolsData";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import DownloadInfoDialog from "@/components/DownloadInfoDialog";
+import { useDownloadInfo } from "@/hooks/useDownloadInfo";
 
 const ToolsSection = () => {
   const { isAuthenticated } = useAuth();
@@ -16,6 +18,7 @@ const ToolsSection = () => {
   
   const [selectedEA, setSelectedEA] = useState("JaguarTrend Pro EA");
   const [selectedPlatform, setSelectedPlatform] = useState("MetaTrader 4");
+  const { isDialogOpen, handleDownloadClick, closeDialog } = useDownloadInfo();
   
   // Platform badge colors
   const platformBadgeColors = {
@@ -24,28 +27,12 @@ const ToolsSection = () => {
     "Both": "bg-gray-500/20 text-gray-300"
   };
 
-  // Download handler function
-  const handleDownload = () => {
-    if (!isAuthenticated) {
-      toast.error("Please login to download tools");
-      navigate("/login");
-      return;
-    }
-    
-    const tool = allTools.find(t => t.name === selectedEA);
-    if (!tool) return;
-    
-    const link = document.createElement('a');
-    link.href = tool.filePath;
-    link.download = tool.name.replace(/\s+/g, '_');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <section id="tools" className="py-16 md:py-24">
       <div className="container mx-auto px-4">
+        {/* Dialog component */}
+        <DownloadInfoDialog isOpen={isDialogOpen} onClose={closeDialog} />
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -117,7 +104,7 @@ const ToolsSection = () => {
               
               <Button 
                 className="w-full bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center justify-center gap-2"
-                onClick={handleDownload}
+                onClick={handleDownloadClick}
                 disabled={!isAuthenticated}
               >
                 {isAuthenticated ? (

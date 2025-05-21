@@ -11,6 +11,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import DownloadInfoDialog from "@/components/DownloadInfoDialog";
+import { useDownloadInfo } from "@/hooks/useDownloadInfo";
 
 const ToolDetail = () => {
   const { toolId } = useParams<{ toolId: string }>();
@@ -18,6 +20,7 @@ const ToolDetail = () => {
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("how-it-works");
   const navigate = useNavigate();
+  const { isDialogOpen, handleDownloadClick, closeDialog } = useDownloadInfo();
 
   // Platform badge colors
   const platformBadgeColors = {
@@ -31,23 +34,6 @@ const ToolDetail = () => {
   
   // New badge color
   const newBadgeColor = "bg-[#0EA5E9]/20 text-[#0EA5E9]";
-
-  const handleDownload = () => {
-    if (!tool) return;
-    
-    if (!isAuthenticated) {
-      toast.error("Please login to download tools");
-      navigate("/login");
-      return;
-    }
-    
-    const link = document.createElement('a');
-    link.href = tool.filePath;
-    link.download = tool.name.replace(/\s+/g, '_');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   if (!tool) {
     return (
@@ -72,6 +58,9 @@ const ToolDetail = () => {
       <Navbar />
 
       <main>
+        {/* Dialog component */}
+        <DownloadInfoDialog isOpen={isDialogOpen} onClose={closeDialog} />
+        
         {/* Hero Section */}
         <section className="pt-16 pb-8">
           <div className="container mx-auto px-4">
@@ -115,7 +104,7 @@ const ToolDetail = () => {
                 <div className="flex flex-wrap gap-3 mb-8">
                   {isAuthenticated ? (
                     <Button 
-                      onClick={handleDownload} 
+                      onClick={handleDownloadClick} 
                       className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center gap-2"
                     >
                       Download v{tool.version} <Download className="h-4 w-4" />
@@ -174,7 +163,7 @@ const ToolDetail = () => {
                   
                   {isAuthenticated ? (
                     <Button 
-                      onClick={handleDownload} 
+                      onClick={handleDownloadClick} 
                       className="w-full mt-4 bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900"
                     >
                       Download Now

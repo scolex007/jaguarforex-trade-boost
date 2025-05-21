@@ -12,6 +12,8 @@ import { truncateText } from "@/lib/utils";
 import { getToolsData } from "@/data/toolsData";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import DownloadInfoDialog from "@/components/DownloadInfoDialog";
+import { useDownloadInfo } from "@/hooks/useDownloadInfo";
 
 const Tools = () => {
   const categories = ["All", "Expert Advisors", "Indicators", "Scripts", "Utilities"];
@@ -19,6 +21,7 @@ const Tools = () => {
   const [activePlatform, setActivePlatform] = useState("All");
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { isDialogOpen, handleDownloadClick, closeDialog } = useDownloadInfo();
   
   // Badge color variants for platform badges
   const platformBadgeColors = {
@@ -57,24 +60,6 @@ const Tools = () => {
   const getRandomColor = (colors: string[]) => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
-  
-  // Download handler function
-  const handleDownload = (filePath: string, toolName: string) => {
-    if (!isAuthenticated) {
-      toast.error("Please login to download tools");
-      navigate("/login");
-      return;
-    }
-    
-    // In a real implementation, you would validate the file exists
-    // Create a link element to trigger download
-    const link = document.createElement('a');
-    link.href = filePath;
-    link.download = toolName.replace(/\s+/g, '_');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   return (
     <div className="min-h-screen bg-jaguarblue-800">
@@ -83,6 +68,9 @@ const Tools = () => {
       <main>
         <section className="py-12 md:py-16">
           <div className="container mx-auto px-4">
+            {/* Dialog component */}
+            <DownloadInfoDialog isOpen={isDialogOpen} onClose={closeDialog} />
+            
             <div className="mb-12 text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
                 JaguarForex <span className="gradient-text">Trading Tools</span>
@@ -191,7 +179,7 @@ const Tools = () => {
                       variant="ghost" 
                       size="icon" 
                       className="bg-jaguarblue-600 hover:bg-jaguarblue-500 text-white"
-                      onClick={() => isAuthenticated ? handleDownload(tool.filePath, tool.name) : navigate("/login")}
+                      onClick={handleDownloadClick}
                       title={isAuthenticated ? "Quick download" : "Login to download"}
                     >
                       <Download className="h-4 w-4" />
