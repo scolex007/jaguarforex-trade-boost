@@ -25,18 +25,8 @@ const MessageDisplay = ({ messages, isLoading }: MessageDisplayProps) => {
   };
 
   return (
-    <ScrollArea className="h-[500px] p-4">
-      <div className="space-y-4 px-4">
-        {/* Welcome message if no messages */}
-        {messages.length === 0 && (
-          <div className="bg-jaguarblue-800/50 rounded-lg p-4 text-center">
-            <h3 className="text-lg font-medium mb-2 text-jaguargold">Welcome to JaguarForex AI Assistant</h3>
-            <p className="text-gray-300">
-              I can help with forex trading questions, market analysis, and trading strategies. How can I assist you today?
-            </p>
-          </div>
-        )}
-        
+    <ScrollArea className="h-[500px] py-6">
+      <div className="space-y-4 px-4 max-w-3xl mx-auto">
         {/* Display messages */}
         {messages.map((msg, index) => (
           <div

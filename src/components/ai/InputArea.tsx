@@ -10,9 +10,10 @@ interface InputAreaProps {
   handleSendMessage: () => void;
   isLoading: boolean;
   textareaRef?: RefObject<HTMLTextAreaElement>;
+  centered?: boolean;
 }
 
-const InputArea = ({ input, setInput, handleSendMessage, isLoading, textareaRef }: InputAreaProps) => {
+const InputArea = ({ input, setInput, handleSendMessage, isLoading, textareaRef, centered = false }: InputAreaProps) => {
   const localTextareaRef = useRef<HTMLTextAreaElement>(null);
   const activeRef = textareaRef || localTextareaRef;
 
@@ -35,14 +36,16 @@ const InputArea = ({ input, setInput, handleSendMessage, isLoading, textareaRef 
   };
 
   return (
-    <div className="flex w-full items-end gap-2">
+    <div className={`flex w-full items-end gap-2 ${centered ? 'shadow-lg rounded-lg' : ''}`}>
       <Textarea
         ref={activeRef}
         value={input}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder="Ask a question about forex trading..."
-        className="flex-1 bg-jaguarblue-800/50 border-jaguarblue-700/30 min-h-[52px] w-full rounded-lg resize-none"
+        className={`flex-1 bg-jaguarblue-800/50 border-jaguarblue-700/30 min-h-[52px] w-full resize-none ${
+          centered ? 'rounded-lg py-3 px-4 text-base' : 'rounded-lg'
+        }`}
         disabled={isLoading}
       />
       <Button

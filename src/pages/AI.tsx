@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import ChatInterface from '@/components/ai/ChatInterface';
 import { availableModels } from '@/services/aiAssistantService';
 
@@ -20,30 +19,33 @@ const AI = () => {
       
       <Navbar />
       
-      <main className="min-h-screen bg-jaguarblue-950 pt-20 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          {/* Header - Simplified */}
-          <div className="mb-6 text-center">
+      <main className="min-h-screen bg-jaguarblue-950 pt-20 pb-16 flex flex-col items-center justify-center">
+        <div className="container mx-auto px-4 max-w-5xl flex-1 flex flex-col">
+          {/* Header - Simplified title */}
+          <div className="mb-8 text-center">
             <h1 className="text-2xl md:text-3xl font-bold">
-              <span className="gradient-text">AI</span> Assistant
+              <span className="gradient-text">Advanced Forex AI</span> Assistant
             </h1>
+            <p className="text-gray-400 mt-2">
+              I can help with forex trading questions, market analysis, and trading strategies
+            </p>
           </div>
           
           {/* Chat interface */}
-          <ChatInterface 
-            availableModels={availableModels}
-            selectedModel={selectedModel}
-            setSelectedModel={setSelectedModel}
-          />
-          
-          {/* Minimalist disclaimer */}
-          <div className="mt-4 text-center text-xs text-gray-500">
-            <p>AI responses should not be considered as financial advice.</p>
+          <div className="flex-1 flex flex-col">
+            <ChatInterface 
+              availableModels={availableModels}
+              selectedModel={selectedModel}
+              setSelectedModel={setSelectedModel}
+            />
+            
+            {/* Minimalist disclaimer */}
+            <div className="mt-4 text-center text-xs text-gray-500">
+              <p>AI responses should not be considered as financial advice.</p>
+            </div>
           </div>
         </div>
       </main>
-      
-      <Footer />
     </>
   );
 };

@@ -1,6 +1,5 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { SendHorizontal } from 'lucide-react';
 import { Message, sendMessage, ModelOption } from '@/services/aiAssistantService';
 import {
   Card,
@@ -21,6 +20,7 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFirstMessage, setIsFirstMessage] = useState<boolean>(true);
 
   // Refs for the container
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -41,6 +41,10 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+
+    if (isFirstMessage) {
+      setIsFirstMessage(false);
+    }
 
     try {
       // If this is the first message, add a welcome message
@@ -72,28 +76,45 @@ const ChatInterface = ({ availableModels, selectedModel, setSelectedModel }: Cha
   };
 
   return (
-    <Card className="bg-jaguarblue-900/50 border-jaguarblue-700/30 flex flex-col shadow-lg rounded-xl overflow-hidden">
-      {/* Chat messages - Simplified design */}
-      <CardContent className="p-0 flex-1" ref={chatContainerRef}>
-        <MessageDisplay 
-          messages={messages}
-          isLoading={isLoading}
-        />
-      </CardContent>
-      
-      {/* Input area - Simplified */}
-      <CardFooter className="border-t border-jaguarblue-700/30 p-4">
-        <div className="w-full">
-          <InputArea 
-            input={input}
-            setInput={setInput}
-            handleSendMessage={handleSendMessage}
-            isLoading={isLoading}
-            textareaRef={textareaRef}
-          />
+    <div className="flex flex-col flex-1">
+      {messages.length > 0 ? (
+        // Chat with messages
+        <Card className="bg-jaguarblue-900/50 border-jaguarblue-700/30 flex flex-col shadow-lg rounded-xl overflow-hidden flex-1">
+          <CardContent className="p-0 flex-1" ref={chatContainerRef}>
+            <MessageDisplay 
+              messages={messages}
+              isLoading={isLoading}
+            />
+          </CardContent>
+          
+          <CardFooter className="border-t border-jaguarblue-700/30 p-4">
+            <div className="w-full">
+              <InputArea 
+                input={input}
+                setInput={setInput}
+                handleSendMessage={handleSendMessage}
+                isLoading={isLoading}
+                textareaRef={textareaRef}
+              />
+            </div>
+          </CardFooter>
+        </Card>
+      ) : (
+        // Empty state with centered input
+        <div className="flex flex-col items-center justify-center flex-1">
+          <div className="max-w-2xl w-full">
+            <InputArea 
+              input={input}
+              setInput={setInput}
+              handleSendMessage={handleSendMessage}
+              isLoading={isLoading}
+              textareaRef={textareaRef}
+              centered={true}
+            />
+          </div>
         </div>
-      </CardFooter>
-    </Card>
+      )}
+    </div>
   );
 };
 
