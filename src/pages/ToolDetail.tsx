@@ -1,5 +1,4 @@
-
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,12 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const ToolDetail = () => {
   const { toolId } = useParams<{ toolId: string }>();
   const tool = getToolById(toolId || "");
   const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("how-it-works");
+  const navigate = useNavigate();
 
   // Platform badge colors
   const platformBadgeColors = {
@@ -33,6 +34,12 @@ const ToolDetail = () => {
 
   const handleDownload = () => {
     if (!tool) return;
+    
+    if (!isAuthenticated) {
+      toast.error("Please login to download tools");
+      navigate("/login");
+      return;
+    }
     
     const link = document.createElement('a');
     link.href = tool.filePath;
@@ -106,12 +113,21 @@ const ToolDetail = () => {
                 </p>
 
                 <div className="flex flex-wrap gap-3 mb-8">
-                  <Button 
-                    onClick={handleDownload} 
-                    className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center gap-2"
-                  >
-                    Download v{tool.version} <Download className="h-4 w-4" />
-                  </Button>
+                  {isAuthenticated ? (
+                    <Button 
+                      onClick={handleDownload} 
+                      className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center gap-2"
+                    >
+                      Download v{tool.version} <Download className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={() => navigate("/login")}
+                      className="bg-jaguargold hover:bg-jaguargold/90 text-jaguarblue-900 flex items-center gap-2"
+                    >
+                      Login to Download <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                  )}
                   
                   <Button 
                     variant="outline" 

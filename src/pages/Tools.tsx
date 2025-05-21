@@ -10,13 +10,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { truncateText } from "@/lib/utils";
 import { getToolsData } from "@/data/toolsData";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Tools = () => {
   const categories = ["All", "Expert Advisors", "Indicators", "Scripts", "Utilities"];
   const [activeCategory, setActiveCategory] = useState("All");
   const [activePlatform, setActivePlatform] = useState("All");
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   
   // Badge color variants for platform badges
   const platformBadgeColors = {
@@ -58,6 +60,12 @@ const Tools = () => {
   
   // Download handler function
   const handleDownload = (filePath: string, toolName: string) => {
+    if (!isAuthenticated) {
+      toast.error("Please login to download tools");
+      navigate("/login");
+      return;
+    }
+    
     // In a real implementation, you would validate the file exists
     // Create a link element to trigger download
     const link = document.createElement('a');
@@ -179,17 +187,15 @@ const Tools = () => {
                       </Link>
                     </Button>
                     
-                    {isAuthenticated && (
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="bg-jaguarblue-600 hover:bg-jaguarblue-500 text-white"
-                        onClick={() => handleDownload(tool.filePath, tool.name)}
-                        title="Quick download"
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="bg-jaguarblue-600 hover:bg-jaguarblue-500 text-white"
+                      onClick={() => isAuthenticated ? handleDownload(tool.filePath, tool.name) : navigate("/login")}
+                      title={isAuthenticated ? "Quick download" : "Login to download"}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
                   </CardFooter>
                 </Card>
               ))}

@@ -2,13 +2,15 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getToolsData } from "@/data/toolsData";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const ToolsSection = () => {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const allTools = getToolsData();
   const featuredTools = allTools.slice(0, 4); // Just show the first 4 tools
   
@@ -24,6 +26,12 @@ const ToolsSection = () => {
 
   // Download handler function
   const handleDownload = () => {
+    if (!isAuthenticated) {
+      toast.error("Please login to download tools");
+      navigate("/login");
+      return;
+    }
+    
     const tool = allTools.find(t => t.name === selectedEA);
     if (!tool) return;
     
