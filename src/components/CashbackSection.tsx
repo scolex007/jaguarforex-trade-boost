@@ -14,7 +14,10 @@ const CashbackSection = () => {
   // Define broker rates
   const brokerRates = {
     exness: 5,
-    roboforex: 4
+    roboforex: 4,
+    fbs: 3,
+    icmarkets: 5,
+    xm: 4
   };
 
   // Calculate cashback whenever volume or broker changes
@@ -83,6 +86,9 @@ const CashbackSection = () => {
                 >
                   <option value="exness">Exness ($5 per lot)</option>
                   <option value="roboforex">Roboforex ($4 per lot)</option>
+                  <option value="fbs">FBS ($3 per lot)</option>
+                  <option value="icmarkets">ICMarkets ($5 per lot)</option>
+                  <option value="xm">XM ($4 per lot)</option>
                 </select>
               </div>
               
