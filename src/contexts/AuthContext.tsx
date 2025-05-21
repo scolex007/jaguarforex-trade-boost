@@ -1,8 +1,16 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { authService, User } from '../services/authService';
+import { authService } from '../services/api-client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  username?: string;
+  [key: string]: any;
+}
 
 interface AuthContextType {
   user: User | null;
@@ -26,15 +34,18 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     // Check if user is logged in on page load
     const checkAuth = async () => {
       try {
-        const token = authService.getToken();
-        if (token) {
-          const result = await authService.verifyToken();
-          if (result.success && result.user) {
-            setUser(result.user);
+        if (authService.isLoggedIn()) {
+          // Only verify if token exists
+          const response = await authService.verifyToken();
+          if (response.status === 'success') {
+            setUser(response.user || authService.getCurrentUser());
           } else {
-            // Clear invalid token silently
+            // Clear invalid tokens
             await authService.logout();
+            setUser(null);
           }
+        } else {
+          setUser(null);
         }
       } catch (err) {
         console.error("Auth verification error:", err);
@@ -50,14 +61,14 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     setLoading(true);
     setError(null); // Clear previous errors
     try {
-      const result = await authService.login(usernameOrEmail, password);
+      const response = await authService.login(usernameOrEmail, password);
       
-      if (result.success && result.user) {
-        setUser(result.user);
+      if (response.status === 'success' && response.user) {
+        setUser(response.user);
         setError(null);
       } else {
-        setError(result.message || 'Login failed');
-        throw new Error(result.message);
+        setError(response.message || 'Login failed');
+        throw new Error(response.message);
       }
     } catch (err: any) {
       setError(err.message || 'Login failed');
@@ -70,10 +81,10 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const register = async (userData: any) => {
     setLoading(true);
     try {
-      const result = await authService.register(userData);
+      const response = await authService.register(userData);
       setError(null);
-      if (!result.success) {
-        throw new Error(result.message);
+      if (!response.success) {
+        throw new Error(response.message);
       }
     } catch (err: any) {
       setError(err.message || 'Registration failed');
