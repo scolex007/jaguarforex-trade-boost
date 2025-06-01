@@ -1,26 +1,42 @@
+// Export all services from a central location
+export { authService } from './auth-service';
+export { userService } from './user-service';
+export { walletService } from './wallet-service';
+export { brokerService } from './broker-service';
+export { referralService } from './referral-service';
+export { apiClient } from './api-client';
 
-import apiClient from './api-client';
-import { authService } from './auth-service';
-import { userService } from './user-service';
-import { walletService } from './wallet-service';
-import { brokerService } from './broker-service';
-import { referralService } from './referral-service';
+// Export types
+export type { 
+  LoginCredentials, 
+  RegisterData, 
+  User, 
+  AuthResponse 
+} from './auth-service';
 
-// Export all services individually
-export {
-  apiClient,
-  authService,
-  userService,
-  walletService,
-  brokerService,
-  referralService
-};
+export type { 
+  UserProfile, 
+  DashboardData, 
+  Transaction as UserTransaction, 
+  UpdateProfileData 
+} from './user-service';
 
-// Export default object for convenience
-export default {
-  auth: authService,
-  user: userService,
-  wallet: walletService,
-  broker: brokerService,
-  referral: referralService
-};
+export type { 
+  Wallet, 
+  Transaction as WalletTransaction, 
+  WithdrawalRequest, 
+  TransactionFilters 
+} from './wallet-service';
+
+export type { 
+  Broker, 
+  BrokerAccount, 
+  LinkBrokerAccountData, 
+  BrokerAccountStats 
+} from './broker-service';
+
+export type { 
+  Referral, 
+  ReferralStats, 
+  ReferralTree 
+} from './referral-service';
