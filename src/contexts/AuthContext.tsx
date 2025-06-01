@@ -1,126 +1,153 @@
-
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { authService, User } from '../services/auth-service';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService, User } from '../services/auth-service';
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
-  error: string | null;
-  login: (usernameOrEmail: string, password: string) => Promise<void>;
-  register: (userData: any) => Promise<void>;
-  logout: () => Promise<void>;
   isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (userData: any) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  updateUser: (userData: Partial<User>) => void;
+  checkAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if user is logged in on page load
-    const checkAuth = async () => {
-      try {
-        if (authService.isLoggedIn()) {
-          // Only verify if token exists
-          const response = await authService.verifyToken();
-          if (response.status === 'success') {
-            setUser(response.user || authService.getCurrentUser());
-          } else {
-            // Clear invalid tokens
-            await authService.logout();
-            setUser(null);
-          }
-        } else {
-          setUser(null);
-        }
-      } catch (err) {
-        console.error("Auth verification error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    checkAuth();
-  }, []);
-
-  const login = async (usernameOrEmail: string, password: string) => {
-    setLoading(true);
-    setError(null); // Clear previous errors
+  const checkAuth = async () => {
     try {
-      const response = await authService.login({ username: usernameOrEmail, password });
+      setIsLoading(true);
+      
+      // Check if we have a token
+      if (!authService.isLoggedIn()) {
+        setIsAuthenticated(false);
+        setUser(null);
+        return;
+      }
+
+      // Verify the token with the server
+      const response = await authService.verifyToken();
       
       if (response.status === 'success' && response.user) {
         setUser(response.user);
-        setError(null);
+        setIsAuthenticated(true);
+        // Update stored user data
+        localStorage.setItem('jaguarforex_user', JSON.stringify(response.user));
       } else {
-        setError(response.message || 'Login failed');
-        throw new Error(response.message);
+        // Token is invalid
+        setIsAuthenticated(false);
+        setUser(null);
+        localStorage.removeItem('jaguarforex_token');
+        localStorage.removeItem('jaguarforex_user');
       }
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
-      throw err;
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setIsAuthenticated(false);
+      setUser(null);
+      localStorage.removeItem('jaguarforex_token');
+      localStorage.removeItem('jaguarforex_user');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const login = async (username: string, password: string) => {
+    try {
+      const response = await authService.login({ username, password });
+      
+      if (response.status === 'success' && response.token && response.user) {
+        setUser(response.user);
+        setIsAuthenticated(true);
+        return { success: true };
+      } else {
+        return { 
+          success: false, 
+          error: response.message || 'Login failed' 
+        };
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.messages?.error || 'Login failed. Please try again.' 
+      };
     }
   };
 
   const register = async (userData: any) => {
-    setLoading(true);
     try {
       const response = await authService.register(userData);
-      setError(null);
-      if (!response.success) {
-        throw new Error(response.message);
+      
+      if (response.status === 'success') {
+        return { success: true };
+      } else {
+        return { 
+          success: false, 
+          error: response.message || 'Registration failed' 
+        };
       }
-    } catch (err: any) {
-      setError(err.message || 'Registration failed');
-      throw err;
-    } finally {
-      setLoading(false);
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.messages?.error || 'Registration failed. Please try again.' 
+      };
     }
   };
 
   const logout = async () => {
     try {
       await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
       setUser(null);
-      toast.success('You have been logged out successfully');
-      navigate('/'); // Navigate to home page after logout
-    } catch (err) {
-      console.error("Error during logout:", err);
-      // Still clear user data even if API call fails
-      setUser(null);
-      navigate('/');
+      setIsAuthenticated(false);
+      navigate('/login');
     }
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        error,
-        login,
-        register,
-        logout,
-        isAuthenticated: !!user
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  const updateUser = (userData: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+      localStorage.setItem('jaguarforex_user', JSON.stringify(updatedUser));
+    }
+  };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  const value = {
+    user,
+    isAuthenticated,
+    isLoading,
+    login,
+    register,
+    logout,
+    updateUser,
+    checkAuth,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
