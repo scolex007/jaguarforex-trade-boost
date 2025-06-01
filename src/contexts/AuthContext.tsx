@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     setLoading(true);
     setError(null); // Clear previous errors
     try {
-      const response = await authService.login(usernameOrEmail, password);
+      const response = await authService.login({ username: usernameOrEmail, password });
       
       if (response.status === 'success' && response.user) {
         setUser(response.user);
