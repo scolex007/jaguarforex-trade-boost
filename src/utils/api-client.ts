@@ -1,8 +1,7 @@
-
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // Base API URL configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8181';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.jaguarforex.com';
 
 // Create and configure axios instance
 export const createApiClient = (): AxiosInstance => {
