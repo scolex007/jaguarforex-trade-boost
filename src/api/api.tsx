@@ -1,50 +1,37 @@
-
 import axios from 'axios';
-import { getToken } from '../utils/auth';
 
-// Create axios instance with base URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.jaguarforex.com';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://my.jaguarforex.com/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Add request interceptor to add auth token to all requests
+// Add auth token to requests
 api.interceptors.request.use(
   (config) => {
-    const token = getToken();
+    const token = localStorage.getItem('jaguarforex_token');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle common errors
+// Handle auth errors
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Handle common errors (401, 403, etc.)
-    if (error.response) {
-      const { status } = error.response;
-      
-      if (status === 401) {
-        // Unauthorized - redirect to login
-        console.error('Unauthorized access attempt - redirecting to login');
-        // You can add code to redirect to login page here
-      }
-      
-      if (status === 403) {
-        console.error('Forbidden access attempt');
+    if (error.response?.status === 401) {
+      localStorage.removeItem('jaguarforex_token');
+      localStorage.removeItem('jaguarforex_user');
+      if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+        window.location.href = '/login';
       }
     }
-    
     return Promise.reject(error);
   }
 );
