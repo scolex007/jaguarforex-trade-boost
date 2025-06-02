@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import tradingService, { Broker } from '../../api/tradingService';
+import tradingService from '../../api/tradingService';
+import { Broker } from '@/data/brokersData';
 import { Loader2 } from 'lucide-react';
 
 // Form validation schema
