@@ -8,6 +8,7 @@ export interface Broker {
   logo?: string;
   rating?: number;
   featured?: boolean;
+  status: 'active' | 'inactive'; // Added missing status property
   affiliateLink?: string;
   accountTypes?: Array<{
     name: string;
@@ -24,6 +25,7 @@ export const brokersData: Broker[] = [
     logo: 'https://d33vw3iu5hs0zi.cloudfront.net/media/logo_big_new_f7ebab0194.svg',
     rating: 4.8,
     featured: true,
+    status: 'active',
     affiliateLink: 'https://one.exnesstrack.org/a/tffad7az66',
     accountTypes: [
       {
@@ -48,6 +50,7 @@ export const brokersData: Broker[] = [
     logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSN_DX_bdv6PwTaDmP76_9A0Jy7fx4Hl22Xg&s',
     rating: 4.5,
     featured: false,
+    status: 'active',
     affiliateLink: 'https://my.roboforex.com/ph/?a=ztwx',
     accountTypes: [
       {
@@ -68,6 +71,7 @@ export const brokersData: Broker[] = [
     logo: 'https://fbs.com/cabinet/assets/img/logo.svg',
     rating: 4.3,
     featured: false,
+    status: 'active',
     affiliateLink: 'https://fbs.partners?ibl=586643&ibp=21023205',
     accountTypes: [
       {
@@ -88,6 +92,7 @@ export const brokersData: Broker[] = [
     logo: 'https://play-lh.googleusercontent.com/NQC5zyAMHoPDBDTcUqz-oGezCTU5Hj6kV7NL5bYgWV49wR9uXYEbZ8yL1YWaewW39rDI=w240-h480-rw',
     rating: 4.7,
     featured: true,
+    status: 'active',
     affiliateLink: 'https://icmarkets.com/?camp=56951',
     accountTypes: [
       {
@@ -108,6 +113,7 @@ export const brokersData: Broker[] = [
     logo: 'https://cloud.xm-cdn.com/static/xm/common/logos/revamp/XM-logo.jpg',
     rating: 4.6,
     featured: false,
+    status: 'active',
     affiliateLink: 'https://clicks.pipaffiliates.com/c?c=576677&l=en&p=0',
     accountTypes: [
       {
