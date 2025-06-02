@@ -60,7 +60,7 @@ const CashbackRegistrationForm = ({ broker, onSuccess }: NewAccountFormProps) =>
     try {
       // Register account using the trading service
       await tradingService.registerAccount({
-        brokerId: broker.id,
+        broker: broker.id,
         accountNumber: values.accountNumber
       });
       
