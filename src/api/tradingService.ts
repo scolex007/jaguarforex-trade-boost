@@ -1,3 +1,4 @@
+
 import api from './api';
 
 export interface TradingAccount {
@@ -56,7 +57,20 @@ export interface AccountRegistrationData {
   accountName?: string;
 }
 
+export interface Broker {
+  id: string;
+  name: string;
+  displayName?: string;
+  status: 'active' | 'inactive';
+}
+
 const tradingService = {
+  // Broker Management
+  getBrokers: async (): Promise<Broker[]> => {
+    const response = await api.get('/brokers');
+    return response.data;
+  },
+
   // Trading Account Management
   registerAccount: async (data: AccountRegistrationData) => {
     const response = await api.post('/user/trading-accounts', data);

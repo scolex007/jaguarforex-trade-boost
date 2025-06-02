@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { tradingService, Broker } from '../../api/tradingService';
+import tradingService, { Broker } from '../../api/tradingService';
 import { accountRegistrationSchema, AccountRegistrationFormValues } from './schemas/accountRegistrationSchema';
 
 interface AccountRegistrationFormProps {

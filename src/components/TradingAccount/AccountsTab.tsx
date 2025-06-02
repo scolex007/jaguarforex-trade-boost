@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { PlusCircle, Search, RefreshCw } from 'lucide-react';
-import { tradingService, TradingAccount } from '../../api/tradingService';
+import tradingService, { TradingAccount } from '../../api/tradingService';
 import { formatDate, getRelativeTime } from '../../utils/dateUtils';
 import AccountRegistrationModal from './AccountRegistrationModal';
 

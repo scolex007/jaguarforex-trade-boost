@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { tradingService } from '../../api/tradingService';
+import tradingService from '../../api/tradingService';
 import AccountRegistrationForm from './AccountRegistrationForm';
 import { AccountRegistrationFormValues } from './schemas/accountRegistrationSchema';
 
