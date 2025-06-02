@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { tradingService, Broker } from '../../api/tradingService';
+import tradingService, { Broker } from '../../api/tradingService';
 import { Loader2 } from 'lucide-react';
 
 // Form validation schema
@@ -58,7 +59,7 @@ const CashbackRegistrationForm = ({ broker, onSuccess }: NewAccountFormProps) =>
     try {
       // Register account using the trading service
       await tradingService.registerAccount({
-        broker: broker.name,
+        brokerId: broker.id,
         accountNumber: values.accountNumber
       });
       

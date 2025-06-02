@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService, User } from '../services/auth-service';
@@ -6,6 +7,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  loading: boolean; // Added for compatibility
+  error: string | null; // Added for compatibility
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   register: (userData: any) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
@@ -31,6 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const checkAuth = async () => {
@@ -76,6 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string) => {
     try {
+      setError(null);
       const response = await authService.login({ username, password });
       
       if (response.status === 'success' && response.token && response.user) {
@@ -83,37 +88,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         return { success: true };
       } else {
+        const errorMsg = response.message || 'Login failed';
+        setError(errorMsg);
         return { 
           success: false, 
-          error: response.message || 'Login failed' 
+          error: errorMsg
         };
       }
     } catch (error: any) {
       console.error('Login error:', error);
+      const errorMsg = error.response?.data?.messages?.error || 'Login failed. Please try again.';
+      setError(errorMsg);
       return { 
         success: false, 
-        error: error.response?.data?.messages?.error || 'Login failed. Please try again.' 
+        error: errorMsg
       };
     }
   };
 
   const register = async (userData: any) => {
     try {
+      setError(null);
       const response = await authService.register(userData);
       
       if (response.status === 'success') {
         return { success: true };
       } else {
+        const errorMsg = response.message || 'Registration failed';
+        setError(errorMsg);
         return { 
           success: false, 
-          error: response.message || 'Registration failed' 
+          error: errorMsg
         };
       }
     } catch (error: any) {
       console.error('Registration error:', error);
+      const errorMsg = error.response?.data?.messages?.error || 'Registration failed. Please try again.';
+      setError(errorMsg);
       return { 
         success: false, 
-        error: error.response?.data?.messages?.error || 'Registration failed. Please try again.' 
+        error: errorMsg
       };
     }
   };
@@ -126,6 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setUser(null);
       setIsAuthenticated(false);
+      setError(null);
       navigate('/login');
     }
   };
@@ -142,6 +157,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     isAuthenticated,
     isLoading,
+    loading: isLoading, // Alias for compatibility
+    error,
     login,
     register,
     logout,

@@ -6,8 +6,9 @@ export interface TradingAccount {
   userId: string;
   brokerId: string;
   accountNumber: string;
+  account_number: string; // Added for compatibility
   platform: 'MT4' | 'MT5' | 'cTrader';
-  status: 'active' | 'inactive' | 'pending';
+  status: 'active' | 'inactive' | 'pending' | '0' | '1' | '2';
   balance: number;
   equity: number;
   margin: number;
@@ -15,7 +16,10 @@ export interface TradingAccount {
   marginLevel: number;
   openPositions: number;
   createdAt: string;
+  dated: string; // Added for compatibility
   lastUpdated: string;
+  service: string; // Added for compatibility
+  is_demo: string; // Added for compatibility
 }
 
 export interface TradingPosition {
@@ -51,10 +55,12 @@ export interface TradingHistory {
 }
 
 export interface AccountRegistrationData {
-  brokerId: string;
+  brokerId?: string;
+  broker?: string; // Added for compatibility
   accountNumber: string;
-  platform: 'MT4' | 'MT5' | 'cTrader';
+  platform?: 'MT4' | 'MT5' | 'cTrader';
   accountName?: string;
+  isDemo?: boolean;
 }
 
 export interface Broker {
@@ -62,6 +68,7 @@ export interface Broker {
   name: string;
   displayName?: string;
   status: 'active' | 'inactive';
+  affiliateLink?: string; // Added for compatibility
 }
 
 const tradingService = {
@@ -77,8 +84,9 @@ const tradingService = {
     return response.data;
   },
 
-  getAccounts: async (): Promise<TradingAccount[]> => {
-    const response = await api.get('/user/trading-accounts');
+  getAccounts: async (status?: string | null): Promise<TradingAccount[]> => {
+    const params = status ? { status } : {};
+    const response = await api.get('/user/trading-accounts', { params });
     return response.data;
   },
 

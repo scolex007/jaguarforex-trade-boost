@@ -21,7 +21,7 @@ const AccountRegistrationModal = ({ isOpen, onClose, onSuccess }: AccountRegistr
     setIsLoading(true);
     try {
       await tradingService.registerAccount({
-        broker: values.broker,
+        brokerId: values.broker,
         accountNumber: values.accountNumber,
         isDemo: values.isDemo,
       });
